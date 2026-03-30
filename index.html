@@ -48,11 +48,13 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
 .form-row label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
-.form-row input,.form-row textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;outline:none;box-sizing:border-box}
+.form-row input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;outline:none;box-sizing:border-box}
+.form-row textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;outline:none;resize:vertical;box-sizing:border-box}
 .submit-btn{padding:12px 28px;background:#1a5c2a;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px}
 .pbar{flex:1;height:6px;background:#f1f5f9;border-radius:3px}
 .pbar-fill{height:100%;border-radius:3px}
 .demo-badge{text-align:center;margin-top:30px;padding:14px;background:#f1f5f9;border-radius:10px;font-size:12px;color:#94a3b8}
+.back-link{display:inline-block;margin-bottom:20px;color:#64748b;text-decoration:none;font-size:13px}
 @media(max-width:600px){.form-row{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -74,6 +76,7 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 <button class="tab" onclick="showTab('payments')">Payments</button>
 </div>
 
+<!-- AI CHAT -->
 <div class="ai-box">
 <h3>🤖 AI Lending Assistant</h3>
 <div class="chat" id="chatBox">
@@ -82,6 +85,7 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 <div class="chat-form"><input id="chatInput" placeholder="Ask about portfolio risk, ARV, market rates..." onkeydown="if(event.key==='Enter')sendChat()"/><button onclick="sendChat()">Send</button></div>
 </div>
 
+<!-- DASHBOARD -->
 <div id="tab-dashboard">
 <div class="stats">
 <div class="stat"><div class="icon">💰</div><div class="label">Total Portfolio</div><div class="val">$1,938,000</div><div class="chg" style="color:#059669">+12% this quarter</div></div>
@@ -116,6 +120,7 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 </div>
 </div>
 
+<!-- PIPELINE -->
 <div id="tab-loans" style="display:none">
 <div class="card"><h3>Loan Pipeline</h3>
 <div class="grid2">
@@ -137,6 +142,7 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 </div>
 </div>
 
+<!-- APPLICATION -->
 <div id="tab-apply" style="display:none">
 <div class="card"><h3>New Loan Application</h3>
 <div class="form-row"><div><label>Borrower Name</label><input placeholder="Full legal name"/></div><div><label>Email</label><input placeholder="borrower@email.com"/></div></div>
@@ -148,6 +154,7 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 </div>
 </div>
 
+<!-- PAYMENTS -->
 <div id="tab-payments" style="display:none">
 <div class="card"><h3>Payment Tracker</h3>
 <div style="overflow-x:auto">
@@ -169,30 +176,29 @@ td{padding:10px;border-bottom:1px solid #f8fafc}
 
 <script>
 function showTab(id){
-['dashboard','loans','apply','payments'].forEach(function(t){document.getElementById('tab-'+t).style.display='none'});
+['dashboard','loans','apply','payments'].forEach(t=>{document.getElementById('tab-'+t).style.display='none'});
 document.getElementById('tab-'+id).style.display='block';
-document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active')});
+document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
 event.target.classList.add('active');
 }
-var responses={
-d:"Based on your current portfolio of $1.94M across 4 active loans, your risk exposure is moderate. The late payment on LN-2024-005 should be addressed — I'd recommend a formal notice followed by a 5-day cure period.",
-a:"Running comps analysis... The property at 445 Birch Way shows recent sales averaging $285-310K. At a purchase of $178K, the borrower has solid equity margin. ARV estimate: $296,000. Recommended max loan: $207,200 (70% LTV).",
-r:"Current hard money market rates in Texas range 10-14% for fix-and-flip loans. Your weighted average of 12% is competitive. I'd suggest 11.5% for repeat borrowers and 13% for first-timers.",
-k:"Portfolio risk assessment: 1 of 4 active loans (25%) is late. Robert Thompson was on-time for 9 months before this miss — likely a one-time issue. Recommend reaching out before formal default proceedings."
+const responses={
+default:"Based on your current portfolio of $1.94M across 4 active loans, your risk exposure is moderate. The late payment on LN-2024-005 should be addressed — I'd recommend a formal notice followed by a 5-day cure period.",
+arv:"Running comps analysis... The property at 445 Birch Way shows recent sales averaging $285-310K. At a purchase of $178K, the borrower has solid equity margin. ARV estimate: $296,000. Recommended max loan: $207,200 (70% LTV).",
+rate:"Current hard money market rates in Texas range 10-14% for fix-and-flip loans. Your weighted average of 12% is competitive. I'd suggest 11.5% for repeat borrowers and 13% for first-timers.",
+risk:"Portfolio risk assessment: 1 of 4 active loans (25%) is late. Robert Thompson was on-time for 9 months before this miss — likely a one-time issue. Recommend reaching out before formal default proceedings."
 };
 function sendChat(){
-var inp=document.getElementById('chatInput');var val=inp.value.trim();if(!val)return;
-var box=document.getElementById('chatBox');
+const inp=document.getElementById('chatInput');const val=inp.value.trim();if(!val)return;
+const box=document.getElementById('chatBox');
 box.innerHTML+='<div class="msg user"><div class="bubble">'+val+'</div></div>';
 inp.value='';
-var lc=val.toLowerCase();
-var r=responses.d;
-if(lc.indexOf('arv')>=0||lc.indexOf('property')>=0||lc.indexOf('comp')>=0)r=responses.a;
-else if(lc.indexOf('rate')>=0||lc.indexOf('market')>=0)r=responses.r;
-else if(lc.indexOf('risk')>=0||lc.indexOf('late')>=0||lc.indexOf('default')>=0)r=responses.k;
-setTimeout(function(){box.innerHTML+='<div class="msg ai"><div class="bubble">'+r+'</div></div>';box.scrollTop=box.scrollHeight},800);
+const lc=val.toLowerCase();
+let r=responses.default;
+if(lc.includes('arv')||lc.includes('property')||lc.includes('comp'))r=responses.arv;
+else if(lc.includes('rate')||lc.includes('market'))r=responses.rate;
+else if(lc.includes('risk')||lc.includes('late')||lc.includes('default'))r=responses.risk;
+setTimeout(()=>{box.innerHTML+='<div class="msg ai"><div class="bubble">'+r+'</div></div>';box.scrollTop=box.scrollHeight},800);
 }
 </script>
 </body>
 </html>
-
