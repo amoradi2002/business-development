@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Gala Holdings LLC - HELOC Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#0f172a}
+.top{background:linear-gradient(135deg,#0f2b46,#1a4a7a);color:#fff;padding:30px 20px;text-align:center}
+.top h1{font-size:28px;font-weight:800}
+.top p{color:#93c5fd;margin-top:6px;font-size:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.stat{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.stat .icon{font-size:26px;margin-bottom:6px}
+.stat .label{font-size:12px;color:#64748b;font-weight:500}
+.stat .val{font-size:26px;font-weight:800;margin:2px 0}
+.stat .chg{font-size:11px;font-weight:600}
+.card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:20px}
+.card h3{font-size:17px;font-weight:700;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;color:#64748b;font-weight:600;font-size:11px;text-transform:uppercase;border-bottom:2px solid #f1f5f9}
+td{padding:10px;border-bottom:1px solid #f8fafc}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block}
+.b-green{background:#dcfce7;color:#166534}
+.b-blue{background:#dbeafe;color:#1e40af}
+.b-red{background:#fee2e2;color:#991b1b}
+.b-yellow{background:#fef3c7;color:#92400e}
+.b-purple{background:#ede9fe;color:#5b21b6}
+.b-gold{background:#fef3c7;color:#92400e}
+.insight{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:13px;line-height:1.5}
+.ai-box{background:#fff;border:2px solid #d4a017;border-radius:16px;padding:20px;margin-bottom:24px;box-shadow:0 6px 24px rgba(212,160,23,.12)}
+.ai-box h3{color:#b8860b;font-size:15px;margin-bottom:12px}
+.chat{max-height:220px;overflow-y:auto;padding:10px;background:#f8fafc;border-radius:10px;margin-bottom:12px}
+.msg{margin-bottom:10px;display:flex}
+.msg.user{justify-content:flex-end}
+.msg.ai{justify-content:flex-start}
+.bubble{max-width:80%;padding:9px 14px;border-radius:12px;font-size:13px;line-height:1.5}
+.msg.ai .bubble{background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.msg.user .bubble{background:#1a4a7a;color:#fff}
+.chat-form{display:flex;gap:8px}
+.chat-form input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid #e2e8f0;font-size:13px;outline:none}
+.chat-form button{padding:10px 18px;background:#d4a017;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px}
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:8px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:600;font-size:13px;background:#f1f5f9;color:#475569}
+.tab.active{background:#0f2b46;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pipe-col{background:#f8fafc;border-radius:12px;padding:14px}
+.pipe-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid #e2e8f0}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px}
+.form-row label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:9px 12px;border-radius:8px;border:1px solid #d1d5db;font-size:13px;outline:none;box-sizing:border-box}
+.submit-btn{padding:12px 28px;background:#0f2b46;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px}
+.pbar{flex:1;height:6px;background:#f1f5f9;border-radius:3px}
+.pbar-fill{height:100%;border-radius:3px}
+.demo-badge{text-align:center;margin-top:30px;padding:14px;background:#f1f5f9;border-radius:10px;font-size:12px;color:#94a3b8}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="top">
+<div style="font-size:40px;margin-bottom:8px">&#127968;</div>
+<h1>Gala Holdings LLC</h1>
+<p>Home Equity Line of Credit Solutions</p>
+<div style="display:inline-block;margin-top:14px;padding:8px 20px;background:rgba(255,255,255,.1);border-radius:30px;font-size:12px;color:#93c5fd">AI-Powered &bull; HELOC Management &bull; Client Portal</div>
+</div>
+
+<div class="wrap">
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('dashboard',this)">Dashboard</button>
+<button class="tab" onclick="showTab('applications',this)">Applications</button>
+<button class="tab" onclick="showTab('clients',this)">Clients</button>
+<button class="tab" onclick="showTab('payments',this)">Payments</button>
+<button class="tab" onclick="showTab('apply',this)">New Application</button>
+</div>
+
+<!-- AI CHAT -->
+<div class="ai-box">
+<h3>&#129302; AI HELOC Assistant</h3>
+<div class="chat" id="chatBox">
+<div class="msg ai"><div class="bubble">Hi! I'm your AI HELOC assistant. Ask me about equity analysis, interest rates, risk assessments, draw requests, or portfolio performance.</div></div>
+</div>
+<div class="chat-form"><input id="chatInput" placeholder="Ask about equity, rates, risk, draw requests..." onkeydown="if(event.key==='Enter')sendChat()"/><button onclick="sendChat()">Send</button></div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="tab-dashboard">
+<div class="stats">
+<div class="stat"><div class="icon">&#128176;</div><div class="label">Total Credit Lines</div><div class="val">$2.4M</div><div class="chg" style="color:#059669">+18% this quarter</div></div>
+<div class="stat"><div class="icon">&#128203;</div><div class="label">Active HELOCs</div><div class="val">12</div><div class="chg" style="color:#2563eb">+3 this month</div></div>
+<div class="stat"><div class="icon">&#128202;</div><div class="label">Avg LTV</div><div class="val">62.4%</div><div class="chg" style="color:#7c3aed">Below 75% target</div></div>
+<div class="stat"><div class="icon">&#128200;</div><div class="label">Monthly Revenue</div><div class="val">$28,600</div><div class="chg" style="color:#ea580c">+11% vs last mo</div></div>
+</div>
+
+<div class="card">
+<h3>&#129302; AI Insights</h3>
+<div class="insight" style="background:#fee2e2">&#9888;&#65039; <span>Michael Torres (HC-2024-008) has drawn 92% of his $180K line. LTV now at 78% — approaching risk threshold. Recommend freeze on additional draws.</span></div>
+<div class="insight" style="background:#ede9fe">&#127919; <span>New application from Rachel Kim — home appraised at $520K, mortgage balance $210K, requesting $150K HELOC. LTV would be 69%. Strong candidate.</span></div>
+<div class="insight" style="background:#dbeafe">&#128202; <span>Portfolio weighted avg rate: 8.75% (Prime + 2.25%). Market avg: 8.5%. 3 accounts eligible for rate review to improve retention.</span></div>
+<div class="insight" style="background:#dcfce7">&#9989; <span>Sandra Bell's HELOC fully repaid and closed. Total interest earned: $18,940 over 36 months. Excellent repayment history — flag for future products.</span></div>
+</div>
+
+<div class="card">
+<h3>Active HELOC Accounts</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Account</th><th>Client</th><th>Property</th><th>Credit Line</th><th>Drawn</th><th>Available</th><th>Rate</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-001</td><td>James Patterson</td><td style="color:#64748b;font-size:12px">4521 Oakridge Dr, Houston TX</td><td style="font-weight:600">$250,000</td><td>$142,000</td><td style="color:#059669;font-weight:600">$108,000</td><td>8.5%</td><td><span class="badge b-green">Active</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-002</td><td>Maria Gonzalez</td><td style="color:#64748b;font-size:12px">1893 Pecan Valley, San Antonio TX</td><td style="font-weight:600">$175,000</td><td>$89,000</td><td style="color:#059669;font-weight:600">$86,000</td><td>8.75%</td><td><span class="badge b-green">Active</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-003</td><td>David Washington</td><td style="color:#64748b;font-size:12px">7702 Bluebonnet Ln, Austin TX</td><td style="font-weight:600">$300,000</td><td>$195,000</td><td style="color:#059669;font-weight:600">$105,000</td><td>8.25%</td><td><span class="badge b-green">Active</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-004</td><td>Sandra Bell</td><td style="color:#64748b;font-size:12px">332 Magnolia St, Dallas TX</td><td style="font-weight:600">$120,000</td><td>$0</td><td style="color:#64748b">$0</td><td>—</td><td><span class="badge b-blue">Closed</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-005</td><td>Robert Chen</td><td style="color:#64748b;font-size:12px">5510 Westheimer Rd, Houston TX</td><td style="font-weight:600">$200,000</td><td>$67,500</td><td style="color:#059669;font-weight:600">$132,500</td><td>9.0%</td><td><span class="badge b-green">Active</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-006</td><td>Lisa Nguyen</td><td style="color:#64748b;font-size:12px">2248 Preston Rd, Plano TX</td><td style="font-weight:600">$275,000</td><td>$180,000</td><td style="color:#059669;font-weight:600">$95,000</td><td>8.5%</td><td><span class="badge b-green">Active</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-007</td><td>Rachel Kim</td><td style="color:#64748b;font-size:12px">910 Cedar Springs, Fort Worth TX</td><td style="font-weight:600">$150,000</td><td>$0</td><td style="color:#64748b">$150,000</td><td>8.75%</td><td><span class="badge b-yellow">Under Review</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-008</td><td>Michael Torres</td><td style="color:#64748b;font-size:12px">6633 Loop 1604, San Antonio TX</td><td style="font-weight:600">$180,000</td><td>$165,600</td><td style="color:#dc2626;font-weight:600">$14,400</td><td>9.25%</td><td><span class="badge b-red">At Limit</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- APPLICATIONS -->
+<div id="tab-applications" style="display:none">
+<div class="card"><h3>Application Pipeline</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+<div class="pipe-col"><div style="margin-bottom:10px"><span class="badge b-yellow">New</span> <span style="font-size:12px;color:#64748b">2 applications</span></div>
+<div class="pipe-card"><div style="font-weight:700;font-size:14px">Anthony Brooks</div><div style="font-size:12px;color:#64748b;margin-top:3px">1420 Elm St, Arlington TX</div><div style="font-size:12px;color:#64748b">Home Value: $380K &bull; Mortgage: $195K</div><div style="font-size:16px;font-weight:700;color:#1a4a7a;margin-top:6px">$100,000 requested</div><div style="font-size:11px;color:#64748b;margin-top:3px">LTV: 78% &bull; Submitted Mar 28</div></div>
+<div class="pipe-card"><div style="font-weight:700;font-size:14px">Diana Foster</div><div style="font-size:12px;color:#64748b;margin-top:3px">8800 Greenville Ave, Dallas TX</div><div style="font-size:12px;color:#64748b">Home Value: $460K &bull; Mortgage: $220K</div><div style="font-size:16px;font-weight:700;color:#1a4a7a;margin-top:6px">$120,000 requested</div><div style="font-size:11px;color:#64748b;margin-top:3px">LTV: 74% &bull; Submitted Mar 29</div></div>
+</div>
+<div class="pipe-col"><div style="margin-bottom:10px"><span class="badge b-purple">Under Review</span> <span style="font-size:12px;color:#64748b">1 application</span></div>
+<div class="pipe-card"><div style="font-weight:700;font-size:14px">Rachel Kim</div><div style="font-size:12px;color:#64748b;margin-top:3px">910 Cedar Springs, Fort Worth TX</div><div style="font-size:12px;color:#64748b">Home Value: $520K &bull; Mortgage: $210K</div><div style="font-size:16px;font-weight:700;color:#1a4a7a;margin-top:6px">$150,000 requested</div><div style="font-size:11px;color:#64748b;margin-top:3px">LTV: 69% &bull; Appraisal complete</div></div>
+</div>
+<div class="pipe-col"><div style="margin-bottom:10px"><span class="badge b-green">Approved</span> <span style="font-size:12px;color:#64748b">1 application</span></div>
+<div class="pipe-card"><div style="font-weight:700;font-size:14px">Kevin Williams</div><div style="font-size:12px;color:#64748b;margin-top:3px">3345 Riverside Dr, Austin TX</div><div style="font-size:12px;color:#64748b">Home Value: $610K &bull; Mortgage: $280K</div><div style="font-size:16px;font-weight:700;color:#1a4a7a;margin-top:6px">$200,000 approved</div><div style="font-size:11px;color:#64748b;margin-top:3px">LTV: 79% &bull; Closing Apr 4</div></div>
+</div>
+<div class="pipe-col"><div style="margin-bottom:10px"><span class="badge b-blue">Funded</span> <span style="font-size:12px;color:#64748b">Recent</span></div>
+<div class="pipe-card"><div style="font-weight:700;font-size:14px">Lisa Nguyen</div><div style="font-size:12px;color:#64748b;margin-top:3px">2248 Preston Rd, Plano TX</div><div style="font-size:12px;color:#64748b">Home Value: $490K &bull; Mortgage: $175K</div><div style="font-size:16px;font-weight:700;color:#1a4a7a;margin-top:6px">$275,000 funded</div><div style="font-size:11px;color:#64748b;margin-top:3px">LTV: 65% &bull; Funded Mar 15</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CLIENTS -->
+<div id="tab-clients" style="display:none">
+<div class="card">
+<h3>Client Accounts</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Client</th><th>Property</th><th>Credit Line</th><th>Drawn</th><th>Available</th><th>Rate</th><th>Payment Status</th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600">James Patterson</td><td style="color:#64748b;font-size:12px">4521 Oakridge Dr, Houston TX</td><td style="font-weight:600">$250,000</td><td>$142,000</td><td style="color:#059669;font-weight:600">$108,000</td><td>8.5%</td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600">Maria Gonzalez</td><td style="color:#64748b;font-size:12px">1893 Pecan Valley, San Antonio TX</td><td style="font-weight:600">$175,000</td><td>$89,000</td><td style="color:#059669;font-weight:600">$86,000</td><td>8.75%</td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600">David Washington</td><td style="color:#64748b;font-size:12px">7702 Bluebonnet Ln, Austin TX</td><td style="font-weight:600">$300,000</td><td>$195,000</td><td style="color:#059669;font-weight:600">$105,000</td><td>8.25%</td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600">Robert Chen</td><td style="color:#64748b;font-size:12px">5510 Westheimer Rd, Houston TX</td><td style="font-weight:600">$200,000</td><td>$67,500</td><td style="color:#059669;font-weight:600">$132,500</td><td>9.0%</td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600">Lisa Nguyen</td><td style="color:#64748b;font-size:12px">2248 Preston Rd, Plano TX</td><td style="font-weight:600">$275,000</td><td>$180,000</td><td style="color:#059669;font-weight:600">$95,000</td><td>8.5%</td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600">Michael Torres</td><td style="color:#64748b;font-size:12px">6633 Loop 1604, San Antonio TX</td><td style="font-weight:600">$180,000</td><td>$165,600</td><td style="color:#dc2626;font-weight:600">$14,400</td><td>9.25%</td><td><span class="badge b-red">Past Due</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h3>Submit Draw Request</h3>
+<div class="form-row"><div><label>Client Name</label><select><option>Select client...</option><option>James Patterson</option><option>Maria Gonzalez</option><option>David Washington</option><option>Robert Chen</option><option>Lisa Nguyen</option></select></div><div><label>Draw Amount</label><input placeholder="$0.00"/></div></div>
+<div class="form-row"><div><label>Purpose</label><select><option>Select purpose...</option><option>Home Improvement</option><option>Debt Consolidation</option><option>Education</option><option>Medical Expenses</option><option>Business Investment</option><option>Other</option></select></div><div><label>Requested Date</label><input type="date"/></div></div>
+<div class="form-row" style="grid-template-columns:1fr"><div><label>Notes</label><textarea rows="2" placeholder="Additional details about this draw request..."></textarea></div></div>
+<button class="submit-btn">Submit Draw Request for Review</button>
+</div>
+</div>
+
+<!-- PAYMENTS -->
+<div id="tab-payments" style="display:none">
+<div class="stats">
+<div class="stat"><div class="icon">&#128176;</div><div class="label">Monthly Interest Due</div><div class="val">$28,600</div><div class="chg" style="color:#059669">All but 1 current</div></div>
+<div class="stat"><div class="icon">&#128203;</div><div class="label">Total Outstanding</div><div class="val">$839,100</div><div class="chg" style="color:#2563eb">Across 6 accounts</div></div>
+<div class="stat"><div class="icon">&#9989;</div><div class="label">Collection Rate</div><div class="val">96.8%</div><div class="chg" style="color:#059669">Above 95% target</div></div>
+<div class="stat"><div class="icon">&#128200;</div><div class="label">YTD Interest Earned</div><div class="val">$84,200</div><div class="chg" style="color:#7c3aed">On pace for $112K</div></div>
+</div>
+
+<div class="card"><h3>Payment Tracker</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Account</th><th>Client</th><th>Monthly Payment</th><th>Draw Progress</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-001</td><td>James Patterson</td><td style="font-weight:600">$1,006</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><div class="pbar-fill" style="width:57%;background:#22c55e"></div></div><span style="font-size:11px;color:#64748b">57% drawn</span></div></td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-002</td><td>Maria Gonzalez</td><td style="font-weight:600">$649</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><div class="pbar-fill" style="width:51%;background:#22c55e"></div></div><span style="font-size:11px;color:#64748b">51% drawn</span></div></td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-003</td><td>David Washington</td><td style="font-weight:600">$1,341</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><div class="pbar-fill" style="width:65%;background:#22c55e"></div></div><span style="font-size:11px;color:#64748b">65% drawn</span></div></td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-005</td><td>Robert Chen</td><td style="font-weight:600">$506</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><div class="pbar-fill" style="width:34%;background:#22c55e"></div></div><span style="font-size:11px;color:#64748b">34% drawn</span></div></td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-006</td><td>Lisa Nguyen</td><td style="font-weight:600">$1,275</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><div class="pbar-fill" style="width:65%;background:#22c55e"></div></div><span style="font-size:11px;color:#64748b">65% drawn</span></div></td><td><span class="badge b-green">Current</span></td></tr>
+<tr><td style="font-weight:600;color:#1a4a7a">HC-2024-008</td><td>Michael Torres</td><td style="font-weight:600">$1,276</td><td><div style="display:flex;align-items:center;gap:6px"><div class="pbar"><div class="pbar-fill" style="width:92%;background:#ef4444"></div></div><span style="font-size:11px;color:#64748b">92% drawn</span></div></td><td><span class="badge b-red">Past Due</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div class="card"><h3>Recent Transactions</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Mar 30</td><td style="font-weight:600">James Patterson</td><td style="color:#64748b">Monthly Payment</td><td style="font-weight:600;color:#059669">+$1,006</td><td><span class="badge b-green">Received</span></td></tr>
+<tr><td>Mar 29</td><td style="font-weight:600">David Washington</td><td style="color:#64748b">Draw Request</td><td style="font-weight:600;color:#dc2626">-$25,000</td><td><span class="badge b-blue">Funded</span></td></tr>
+<tr><td>Mar 28</td><td style="font-weight:600">Maria Gonzalez</td><td style="color:#64748b">Monthly Payment</td><td style="font-weight:600;color:#059669">+$649</td><td><span class="badge b-green">Received</span></td></tr>
+<tr><td>Mar 27</td><td style="font-weight:600">Lisa Nguyen</td><td style="color:#64748b">Draw Request</td><td style="font-weight:600;color:#dc2626">-$40,000</td><td><span class="badge b-blue">Funded</span></td></tr>
+<tr><td>Mar 25</td><td style="font-weight:600">Michael Torres</td><td style="color:#64748b">Monthly Payment</td><td style="font-weight:600;color:#dc2626">MISSED</td><td><span class="badge b-red">Past Due</span></td></tr>
+<tr><td>Mar 22</td><td style="font-weight:600">Sandra Bell</td><td style="color:#64748b">Final Payoff</td><td style="font-weight:600;color:#059669">+$8,420</td><td><span class="badge b-green">Closed</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- NEW APPLICATION -->
+<div id="tab-apply" style="display:none">
+<div class="card"><h3>New HELOC Application</h3>
+<div class="form-row"><div><label>Applicant Full Name</label><input placeholder="Full legal name"/></div><div><label>Email</label><input placeholder="applicant@email.com"/></div></div>
+<div class="form-row"><div><label>Phone</label><input placeholder="(555) 123-4567"/></div><div><label>Social Security (last 4)</label><input placeholder="XXXX"/></div></div>
+<div class="form-row"><div><label>Property Address</label><input placeholder="Full property address"/></div><div><label>Property Type</label><select><option>Select type...</option><option>Single Family</option><option>Condo/Townhome</option><option>Multi-Family (2-4 units)</option><option>Investment Property</option></select></div></div>
+<div class="form-row"><div><label>Estimated Home Value</label><input placeholder="$0.00"/></div><div><label>Current Mortgage Balance</label><input placeholder="$0.00"/></div></div>
+<div class="form-row"><div><label>Requested Credit Line</label><input placeholder="$0.00"/></div><div><label>Purpose of HELOC</label><select><option>Select purpose...</option><option>Home Improvement</option><option>Debt Consolidation</option><option>Education Expenses</option><option>Medical Expenses</option><option>Business Investment</option><option>Emergency Fund</option><option>Other</option></select></div></div>
+<div class="form-row"><div><label>Annual Household Income</label><input placeholder="$0.00"/></div><div><label>Employment Status</label><select><option>Select status...</option><option>W-2 Employed</option><option>Self-Employed</option><option>Retired</option><option>Other</option></select></div></div>
+<div class="form-row"><div><label>Employer Name</label><input placeholder="Company name"/></div><div><label>Years at Current Job</label><input placeholder="Years"/></div></div>
+<div class="form-row" style="grid-template-columns:1fr"><div><label>Additional Notes</label><textarea rows="3" placeholder="Any additional information about the application, exit strategy, or special circumstances..."></textarea></div></div>
+<button class="submit-btn">Submit Application for AI Review</button>
+</div>
+</div>
+
+<div class="demo-badge">DEMO — Sample data for demonstration purposes</div>
+</div>
+
+<script>
+function showTab(id,btn){
+var tabs=['dashboard','applications','clients','payments','apply'];
+for(var i=0;i<tabs.length;i++){document.getElementById('tab-'+tabs[i]).style.display='none';}
+document.getElementById('tab-'+id).style.display='block';
+var btns=document.querySelectorAll('.tab');
+for(var j=0;j<btns.length;j++){btns[j].classList.remove('active');}
+btn.classList.add('active');
+}
+var responses={
+equity:"Based on current portfolio analysis: Average home equity across your 6 active HELOCs is $247K. Total available credit remaining is $540,900. The strongest equity position is Robert Chen at 66% unused credit. I'd recommend targeting homeowners in the $400-600K range in DFW and Austin — highest approval rates and lowest default risk in your portfolio.",
+rate:"Current HELOC market rates in Texas: Prime rate is 6.5%, typical HELOC spread is Prime + 1.5% to 3.0%. Your portfolio weighted average of 8.75% (Prime + 2.25%) is competitive. For borrowers with 700+ credit scores and LTV under 70%, consider offering Prime + 1.75% to win more deals. That's still strong margin.",
+risk:"Portfolio risk assessment: 1 of 6 active accounts (Michael Torres, HC-2024-008) is past due and at 92% utilization. LTV on that property is now 78% — above your 75% comfort zone. Recommend: freeze additional draws, send 15-day cure notice, and request updated property valuation. Rest of portfolio is healthy — avg LTV 62.4%, all payments current.",
+draw:"Recent draw activity: 2 draws funded this month totaling $65,000. David Washington drew $25K for home renovation (contractor verified). Lisa Nguyen drew $40K for investment property down payment. Both within approved limits. Pending: no new draw requests in queue. Available credit across all accounts: $540,900."
+};
+function sendChat(){
+var inp=document.getElementById('chatInput');
+var val=inp.value.trim();
+if(!val)return;
+var box=document.getElementById('chatBox');
+box.innerHTML+='<div class="msg user"><div class="bubble">'+val+'</div></div>';
+inp.value='';
+var lc=val.toLowerCase();
+var r=responses.equity;
+if(lc.indexOf('rate')>=0||lc.indexOf('interest')>=0||lc.indexOf('prime')>=0||lc.indexOf('market')>=0)r=responses.rate;
+else if(lc.indexOf('risk')>=0||lc.indexOf('late')>=0||lc.indexOf('default')>=0||lc.indexOf('past due')>=0||lc.indexOf('torres')>=0)r=responses.risk;
+else if(lc.indexOf('draw')>=0||lc.indexOf('request')>=0||lc.indexOf('fund')>=0||lc.indexOf('available')>=0)r=responses.draw;
+setTimeout(function(){box.innerHTML+='<div class="msg ai"><div class="bubble">'+r+'</div></div>';box.scrollTop=box.scrollHeight;},800);
+}
+</script>
+</body>
+</html>
