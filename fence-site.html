@@ -6,363 +6,401 @@
 <title>Gate &amp; Fence Solutions Inc - Professional Ironwork in Los Angeles</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fff;color:#333}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#ffffff;color:#333333}
 a{text-decoration:none;color:inherit}
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-.nav-logo{font-size:18px;font-weight:800;color:#1b1464}
-.nav-links{display:flex;gap:24px;font-size:14px;font-weight:500;color:#555}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;background:#ffffff;box-shadow:0 2px 10px rgba(0,0,0,.08);transition:box-shadow .3s}
+.nav-logo{font-size:18px;font-weight:800;color:#1b1464;display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:28px;font-size:14px;font-weight:500;color:#555}
 .nav-links a:hover{color:#1b1464}
-.nav-cta{padding:10px 22px;background:#1b1464;color:#fff;border-radius:6px;font-weight:700;font-size:13px;border:none;cursor:pointer}
-.nav-cta:hover{background:#12104e}
+.nav-cta{padding:10px 24px;background:#1b1464;color:#fff;border-radius:6px;font-weight:700;font-size:13px;border:none;cursor:pointer;transition:background .2s}
+.nav-cta:hover{background:#120e45}
 .mobile-menu{display:none;background:none;border:none;color:#1b1464;font-size:24px;cursor:pointer}
-.hero{padding:120px 24px 70px;text-align:center;background:#111;color:#fff;position:relative}
-.hero h1{font-size:48px;font-weight:900;line-height:1.1;margin-bottom:16px;max-width:700px;margin-left:auto;margin-right:auto}
-.hero p{font-size:17px;color:#aaa;max-width:520px;margin:0 auto 32px;line-height:1.6}
-.btn-primary{padding:16px 36px;background:#1b1464;color:#fff;border-radius:6px;font-weight:700;font-size:15px;border:none;cursor:pointer;display:inline-block;transition:all .2s}
-.btn-primary:hover{background:#12104e;transform:translateY(-1px)}
-.hero-stats{display:flex;justify-content:center;gap:48px;margin-top:50px;flex-wrap:wrap}
-.hero-stat .num{font-size:32px;font-weight:900;color:#fff}
-.hero-stat .lbl{font-size:13px;color:#777;margin-top:2px}
-.section{padding:70px 24px}
+
+/* HERO */
+.hero{padding:140px 24px 80px;text-align:center;background:#111111;position:relative;overflow:hidden}
+.hero h1{font-size:48px;font-weight:900;line-height:1.15;margin-bottom:18px;color:#ffffff;max-width:700px;margin-left:auto;margin-right:auto}
+.hero p{font-size:18px;color:#cccccc;max-width:600px;margin:0 auto 36px;line-height:1.7}
+.btn-primary{padding:16px 40px;background:#1b1464;color:#fff;border-radius:6px;font-weight:700;font-size:15px;border:none;cursor:pointer;transition:all .2s;display:inline-block}
+.btn-primary:hover{background:#120e45;transform:translateY(-1px)}
+.hero-stats{display:flex;justify-content:center;gap:48px;margin-top:60px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:34px;font-weight:900;color:#ffffff}
+.hero-stat .lbl{font-size:13px;color:#999999;margin-top:4px}
+
+/* SECTIONS */
+.section{padding:80px 24px}
 .section-inner{max-width:1100px;margin:0 auto}
-.section-title{font-size:32px;font-weight:900;color:#1b1464;margin-bottom:12px;text-align:center}
-.section-sub{font-size:15px;color:#666;max-width:500px;margin:0 auto 36px;text-align:center;line-height:1.6}
+.section-title{font-size:34px;font-weight:800;color:#1b1464;margin-bottom:12px}
+.section-sub{font-size:16px;color:#666;max-width:600px;line-height:1.7;margin-bottom:40px}
 .bg-light{background:#f7f7f7}
-.portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
-.portfolio-item{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:#eee;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:transform .25s}
-.portfolio-item:hover{transform:translateY(-4px)}
-.portfolio-item .overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.75) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:18px}
-.portfolio-item .overlay h4{font-size:15px;font-weight:700;color:#fff}
-.portfolio-item .overlay p{font-size:12px;color:#ddd;font-weight:500}
-.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
-.service-card{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:all .25s;border:1px solid #eee}
-.service-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
-.service-icon{font-size:30px;margin-bottom:12px}
-.service-card h4{font-size:16px;font-weight:700;color:#1b1464;margin-bottom:6px}
-.service-card p{font-size:13px;color:#666;line-height:1.6}
-.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
-.process-step{text-align:center;padding:28px 18px;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-.step-num{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;background:#1b1464;color:#fff;font-size:18px;font-weight:800;border-radius:50%;margin-bottom:12px}
-.process-step h4{font-size:15px;font-weight:700;color:#1b1464;margin-bottom:6px}
-.process-step p{font-size:13px;color:#666;line-height:1.5}
-.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-.review-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.review-stars{color:#f59e0b;font-size:16px;margin-bottom:10px}
-.review-card blockquote{font-size:14px;color:#444;line-height:1.6;margin-bottom:12px;font-style:italic}
-.review-author{font-size:13px;font-weight:700;color:#1b1464}
-.review-loc{font-size:12px;color:#888}
-.cta-section{padding:70px 24px;text-align:center;background:#1b1464;color:#fff}
-.cta-section h2{font-size:32px;font-weight:800;margin-bottom:12px}
-.cta-section p{font-size:16px;color:rgba(255,255,255,.7);margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto}
-.cta-btn{padding:16px 36px;background:#fff;color:#1b1464;border-radius:6px;font-weight:700;font-size:15px;border:none;cursor:pointer}
-.footer{padding:40px 24px;background:#111;text-align:center;color:#888;font-size:13px}
-.demo-banner{background:#1b1464;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700;position:fixed;bottom:0;left:0;right:0;z-index:100}
-/* CHAT */
-.chat-widget{position:fixed;bottom:56px;right:24px;z-index:99}
-.chat-toggle{width:60px;height:60px;background:#1b1464;border-radius:50%;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(27,20,100,.4);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;transition:transform .2s;animation:pulse 2s infinite}
-.chat-toggle:hover{transform:scale(1.1)}
-@keyframes pulse{0%,100%{box-shadow:0 4px 20px rgba(27,20,100,.4)}50%{box-shadow:0 4px 30px rgba(27,20,100,.6)}}
-.chat-panel{position:absolute;bottom:72px;right:0;width:400px;background:#fff;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.2);display:none;overflow:hidden}
-.chat-panel.open{display:block}
-.chat-header{background:#1b1464;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
-.chat-header h4{font-size:14px;font-weight:700;color:#fff}
-.chat-header p{font-size:11px;color:rgba(255,255,255,.6)}
-.chat-close{background:none;border:none;color:rgba(255,255,255,.6);font-size:20px;cursor:pointer}
-.chat-messages{height:340px;overflow-y:auto;padding:16px;background:#fafafa}
-.chat-msg{margin-bottom:12px;display:flex}
-.chat-msg.user{justify-content:flex-end}
-.chat-msg.ai{justify-content:flex-start}
-.chat-bubble{max-width:85%;padding:11px 15px;border-radius:14px;font-size:13px;line-height:1.5}
-.chat-msg.ai .chat-bubble{background:#fff;color:#333;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.chat-msg.user .chat-bubble{background:#1b1464;color:#fff}
-.chat-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #eee;background:#fff}
-.chat-input-row input{flex:1;padding:10px 14px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none;color:#333}
-.chat-input-row input:focus{border-color:#1b1464}
-.chat-input-row button{padding:10px 18px;background:#1b1464;color:#fff;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer}
-.slot-btn{display:inline-block;padding:8px 14px;margin:3px;background:#f0f0f7;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:600;color:#1b1464;cursor:pointer;transition:all .15s}
-.slot-btn:hover{background:#1b1464;color:#fff}
-.slot-btn.booked{background:#e8e8e8;color:#999;cursor:default;text-decoration:line-through}
-/* TOAST */
-.toast{position:fixed;top:20px;right:20px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:16px 22px;z-index:200;display:none;max-width:380px;border-left:4px solid #22c55e;animation:slideIn .4s ease}
-@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-.toast-title{font-size:14px;font-weight:700;color:#1b1464;margin-bottom:4px}
-.toast-body{font-size:12px;color:#666;line-height:1.5}
-.toast-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:16px;color:#999;cursor:pointer}
-@media(max-width:768px){.nav-links{display:none}.nav-cta{display:none}.mobile-menu{display:block}.hero h1{font-size:30px}.services-grid{grid-template-columns:1fr}.portfolio-grid{grid-template-columns:1fr 1fr}.process-grid{grid-template-columns:1fr 1fr}.chat-panel{width:calc(100vw - 32px);right:-8px}}
-@media(max-width:480px){.portfolio-grid{grid-template-columns:1fr}.process-grid{grid-template-columns:1fr}.hero-stats{flex-direction:column;gap:14px}}
+.bg-white{background:#ffffff}
+
+/* PORTFOLIO / OUR WORK */
+.portfolio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.portfolio-item{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:#eee;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:all .3s}
+.portfolio-item:hover{box-shadow:0 8px 24px rgba(0,0,0,.12);transform:translateY(-3px)}
+.portfolio-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,#e8e8f0,#d0d0e0)}
+.portfolio-item .overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.7) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px;transition:all .3s}
+.portfolio-item:hover .overlay{background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.8) 100%)}
+.portfolio-item .overlay h4{font-size:16px;font-weight:700;color:#fff}
+.portfolio-item .overlay p{font-size:12px;color:#ccc;font-weight:600;margin-top:2px}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.service-card{background:#ffffff;border-radius:12px;padding:28px;transition:all .25s;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.service-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-3px)}
+.service-icon{font-size:32px;margin-bottom:14px}
+.service-card h4{font-size:17px;font-weight:700;color:#1b1464;margin-bottom:8px}
+.service-card p{font-size:14px;color:#555;line-height:1.6}
+
+/* PROCESS */
+.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.process-step{text-align:center;padding:28px 20px}
+.step-num{display:inline-flex;width:48px;height:48px;align-items:center;justify-content:center;background:#1b1464;color:#fff;font-size:18px;font-weight:800;border-radius:50%;margin-bottom:16px}
+.process-step h4{font-size:16px;font-weight:700;color:#1b1464;margin-bottom:8px}
+.process-step p{font-size:14px;color:#666;line-height:1.6}
+
+/* REVIEWS */
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.review-card{background:#ffffff;border-radius:12px;padding:28px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.review-stars{color:#1b1464;font-size:16px;margin-bottom:12px}
+.review-card blockquote{font-size:14px;color:#444;line-height:1.7;margin-bottom:16px;font-style:italic}
+.review-author{font-size:14px;font-weight:700;color:#1b1464}
+.review-loc{font-size:13px;color:#888}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.contact-info{display:flex;flex-direction:column;gap:24px}
+.contact-item{display:flex;gap:14px;align-items:flex-start}
+.contact-icon{width:44px;height:44px;background:rgba(27,20,100,.08);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.contact-item h4{font-size:14px;font-weight:700;color:#1b1464;margin-bottom:2px}
+.contact-item p{font-size:14px;color:#666}
+.contact-form{display:flex;flex-direction:column;gap:16px}
+.contact-form label{font-size:13px;font-weight:600;color:#333;margin-bottom:4px;display:block}
+.contact-form input,.contact-form textarea{width:100%;padding:14px 16px;background:#f0f0f0;border:none;border-bottom:2px solid #ddd;border-radius:4px;color:#333;font-size:14px;outline:none;font-family:inherit;transition:border-color .2s}
+.contact-form input:focus,.contact-form textarea:focus{border-bottom-color:#1b1464}
+.contact-form textarea{min-height:120px;resize:vertical}
+.form-group{margin-bottom:0}
+
+/* FOOTER */
+.footer{background:#111111;padding:40px 24px;text-align:center}
+.footer p{font-size:13px;color:#aaa}
+.footer-instagram{display:inline-block;margin-bottom:12px;font-size:24px;color:#fff;transition:color .2s}
+.footer-instagram:hover{color:#1b1464}
+
+/* DEMO BANNER */
+.demo-banner{background:#1b1464;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700;position:fixed;bottom:0;left:0;right:0;z-index:200}
+
+/* CHAT WIDGET */
+.chat-toggle{position:fixed;bottom:60px;right:24px;width:60px;height:60px;border-radius:50%;background:#1b1464;color:#fff;border:none;cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 16px rgba(27,20,100,.4);transition:transform .2s;animation:chatPulse 2s ease-in-out infinite}
+.chat-toggle:hover{transform:scale(1.08)}
+@keyframes chatPulse{0%,100%{box-shadow:0 4px 16px rgba(27,20,100,.4)}50%{box-shadow:0 4px 24px rgba(27,20,100,.7)}}
+.chat-panel{position:fixed;bottom:130px;right:24px;width:380px;max-height:520px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.18);z-index:150;display:none;flex-direction:column;overflow:hidden}
+.chat-panel.open{display:flex}
+.chat-header{background:#1b1464;color:#fff;padding:16px 20px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.chat-close{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:.8}
+.chat-close:hover{opacity:1}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;max-height:340px}
+.chat-msg{max-width:85%;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+.chat-msg.ai{background:#f0f0f0;color:#333;align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:#1b1464;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-input-area{display:flex;padding:12px;border-top:1px solid #eee;gap:8px}
+.chat-input-area input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;font-family:inherit}
+.chat-input-area input:focus{border-color:#1b1464}
+.chat-send{background:#1b1464;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
+.chat-send:hover{background:#120e45}
+
+@media(max-width:768px){
+.nav-links{display:none}
+.nav-cta{display:none}
+.mobile-menu{display:block}
+.hero h1{font-size:30px}
+.hero-stats{gap:24px}
+.hero-stat .num{font-size:26px}
+.section-title{font-size:26px}
+.contact-grid{grid-template-columns:1fr}
+.services-grid{grid-template-columns:1fr}
+.portfolio-grid{grid-template-columns:1fr 1fr}
+.process-grid{grid-template-columns:1fr 1fr}
+.chat-panel{width:calc(100% - 32px);right:16px;bottom:120px}
+}
+@media(max-width:480px){
+.portfolio-grid{grid-template-columns:1fr}
+.process-grid{grid-template-columns:1fr}
+.hero-stats{flex-direction:column;gap:16px}
+}
 </style>
 </head>
 <body>
+
+<!-- NAV -->
 <nav class="nav">
-<div class="nav-logo">Gate &amp; Fence Solutions Inc.</div>
-<div class="nav-links"><a href="#work">Our Work</a><a href="#services">Services</a><a href="#process">Process</a><a href="#reviews">Reviews</a></div>
-<button class="nav-cta" onclick="openChat()">GET A QUOTE</button>
-<button class="mobile-menu" onclick="openChat()">&#9776;</button>
+<div class="nav-logo">Gate &amp; Fence Solutions Inc</div>
+<div class="nav-links">
+<a href="#work">Our Work</a>
+<a href="#services">Services</a>
+<a href="#process">Process</a>
+<a href="#reviews">Reviews</a>
+</div>
+<button class="nav-cta" onclick="toggleChat()">Get a Free Quote</button>
+<button class="mobile-menu" onclick="toggleChat()">&#9776;</button>
 </nav>
+
+<!-- HERO -->
 <section class="hero">
-<h1>Gate &amp; Fence Solutions Inc.</h1>
+<h1>Gate &amp; Fence Solutions Inc</h1>
 <p>Professional ironworking services for building projects in homes and businesses.</p>
-<button class="btn-primary" onclick="openChat()">GET A QUOTE</button>
+<button class="btn-primary" onclick="toggleChat()">GET A QUOTE</button>
 <div class="hero-stats">
 <div class="hero-stat"><div class="num">500+</div><div class="lbl">Projects Completed</div></div>
 <div class="hero-stat"><div class="num">15+</div><div class="lbl">Years Experience</div></div>
-<div class="hero-stat"><div class="num">4.9&#9733;</div><div class="lbl">Google Rating</div></div>
-<div class="hero-stat"><div class="num">100%</div><div class="lbl">Licensed &amp; Insured</div></div>
+<div class="hero-stat"><div class="num">4.9 &#9733;</div><div class="lbl">Google Rating</div></div>
+<div class="hero-stat"><div class="num">&#10003;</div><div class="lbl">Licensed &amp; Insured</div></div>
 </div>
 </section>
-<section class="section" id="work">
+
+<!-- OUR WORK -->
+<section class="section bg-white" id="work">
 <div class="section-inner">
 <div class="section-title">Our Work</div>
-<div class="section-sub">Custom-designed and fabricated in our LA shop. Every project built to last.</div>
+<div class="section-sub">Every project is custom-designed and fabricated in our LA shop. Here are some recent installations.</div>
 <div class="portfolio-grid">
-<div class="portfolio-item"><div style="width:100%;height:100%;background:linear-gradient(135deg,#2a2a3a,#3a3a4a);display:flex;align-items:center;justify-content:center;font-size:42px">&#128682;</div><div class="overlay"><h4>Modern Entry Gate + DoorBird</h4><p>Luxury Residence, Hollywood Hills</p></div></div>
-<div class="portfolio-item"><div style="width:100%;height:100%;background:linear-gradient(135deg,#3a3530,#4a4540);display:flex;align-items:center;justify-content:center;font-size:42px">&#128682;</div><div class="overlay"><h4>Custom Bronze Driveway Gate</h4><p>Residential, San Fernando Valley</p></div></div>
-<div class="portfolio-item"><div style="width:100%;height:100%;background:linear-gradient(135deg,#d0d0d0,#e8e8e8);display:flex;align-items:center;justify-content:center;font-size:42px">&#128682;</div><div class="overlay"><h4>White Driveway Gate + Pedestrian Entry</h4><p>New Construction, Sherman Oaks</p></div></div>
-<div class="portfolio-item"><div style="width:100%;height:100%;background:linear-gradient(135deg,#87CEEB,#b0d4e8);display:flex;align-items:center;justify-content:center;font-size:42px">&#9881;</div><div class="overlay"><h4>Steel Louver Pergola</h4><p>Hillside Estate, Hollywood Hills</p></div></div>
-<div class="portfolio-item"><div style="width:100%;height:100%;background:linear-gradient(135deg,#d0d0d0,#f0f0f0);display:flex;align-items:center;justify-content:center;font-size:42px">&#128682;</div><div class="overlay"><h4>White Sliding Driveway Gate</h4><p>Craftsman Home, Santa Monica</p></div></div>
-<div class="portfolio-item"><div style="width:100%;height:100%;background:linear-gradient(135deg,#333,#555);display:flex;align-items:center;justify-content:center;font-size:42px">&#128273;</div><div class="overlay"><h4>Pedestrian Gate + Access Control</h4><p>Stone Entry, Hancock Park</p></div></div>
+<div class="portfolio-item"><img src="IMG_7334.jpg" alt="Modern Entry Gate with DoorBird" style="width:100%;height:100%;object-fit:cover"/><div class="overlay"><h4>Modern Entry Gate + DoorBird</h4><p>Luxury Residence, Hollywood Hills</p></div></div>
+<div class="portfolio-item"><img src="IMG_7342.jpg" alt="Pedestrian Gate with Stone Pillars" style="width:100%;height:100%;object-fit:cover"/><div class="overlay"><h4>Pedestrian Gate + Access Control</h4><p>Stone Entry, Hancock Park</p></div></div>
+<div class="portfolio-item"><img src="IMG_7338.jpg" alt="White Driveway Gate" style="width:100%;height:100%;object-fit:cover"/><div class="overlay"><h4>White Driveway Gate</h4><p>New Construction, Sherman Oaks</p></div></div>
+<div class="portfolio-item"><img src="IMG_7336.jpg" alt="Steel Pergola with LA View" style="width:100%;height:100%;object-fit:cover"/><div class="overlay"><h4>Steel Louver Pergola</h4><p>Hillside Estate, Hollywood Hills</p></div></div>
+<div class="portfolio-item"><img src="IMG_7333.jpg" alt="White Sliding Driveway Gate" style="width:100%;height:100%;object-fit:cover"/><div class="overlay"><h4>White Sliding Driveway Gate</h4><p>Craftsman Home, Santa Monica</p></div></div>
+<div class="portfolio-item"><img src="IMG_7340.jpg" alt="Bronze Driveway Gate" style="width:100%;height:100%;object-fit:cover"/><div class="overlay"><h4>Custom Bronze Driveway Gate</h4><p>Residential, San Fernando Valley</p></div></div>
 </div>
 </div>
 </section>
+
+<!-- OUR SERVICES -->
 <section class="section bg-light" id="services">
 <div class="section-inner">
 <div class="section-title">Our Services</div>
-<div class="section-sub">At Gate &amp; Fence Solutions, we provide a broad range of ironwork, including installation, repair, welding, and access controls, whether they are residential or commercial.</div>
+<div class="section-sub">From residential gates to commercial security systems, we handle every aspect of ironwork with precision and craftsmanship.</div>
 <div class="services-grid">
-<div class="service-card"><div class="service-icon">&#128682;</div><h4>Custom Gates</h4><p>Driveway gates, pedestrian gates, sliding gates, and swing gates. Every design custom-fabricated to match your property's style and security needs.</p></div>
-<div class="service-card"><div class="service-icon">&#129521;</div><h4>Fences &amp; Enclosures</h4><p>Wrought iron fencing, privacy screens, louver panels, and pool enclosures. Built to code with premium materials that resist LA weather.</p></div>
-<div class="service-card"><div class="service-icon">&#127978;</div><h4>Railings &amp; Stairs</h4><p>Interior and exterior stair railings, balcony railings, and handrails. Custom designs from modern minimalist to ornamental wrought iron.</p></div>
-<div class="service-card"><div class="service-icon">&#128273;</div><h4>Access Control Systems</h4><p>DoorBird intercoms, keypad entry, remote access, and smart lock integration. Full security solutions for residential and commercial properties.</p></div>
-<div class="service-card"><div class="service-icon">&#128293;</div><h4>Welding &amp; Repair</h4><p>On-site welding, structural repairs, gate motor replacement, and restoration of existing ironwork. Fast response for emergency repairs.</p></div>
-<div class="service-card"><div class="service-icon">&#9881;</div><h4>Custom Ironwork</h4><p>Pergolas, window guards, decorative panels, louver screens, and architectural metalwork. If you can dream it, we can build it.</p></div>
+<div class="service-card">
+<div class="service-icon">&#128682;</div>
+<h4>Custom Gates</h4>
+<p>Driveway gates, pedestrian gates, sliding gates, and swing gates. Every design custom-fabricated to match your property's style and security needs.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">&#129521;</div>
+<h4>Fences &amp; Enclosures</h4>
+<p>Wrought iron fencing, privacy screens, louver panels, and pool enclosures. Built to code with premium materials that resist LA weather.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">&#127978;</div>
+<h4>Railings &amp; Stairs</h4>
+<p>Interior and exterior stair railings, balcony railings, and handrails. Custom designs from modern minimalist to ornamental wrought iron.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">&#128273;</div>
+<h4>Access Control Systems</h4>
+<p>DoorBird intercoms, keypad entry, remote access, and smart lock integration. Full security solutions for residential and commercial properties.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">&#128293;</div>
+<h4>Welding &amp; Repair</h4>
+<p>On-site welding, structural repairs, gate motor replacement, and restoration of existing ironwork. Fast response for emergency repairs.</p>
+</div>
+<div class="service-card">
+<div class="service-icon">&#9881;</div>
+<h4>Custom Ironwork</h4>
+<p>Pergolas, window guards, decorative panels, louver screens, and architectural metalwork. If you can dream it, we can build it.</p>
+</div>
 </div>
 </div>
 </section>
-<section class="section" id="process">
+
+<!-- PROCESS -->
+<section class="section bg-white" id="process">
 <div class="section-inner">
 <div class="section-title">Our Process</div>
 <div class="section-sub">From first call to final installation, we make it simple.</div>
 <div class="process-grid">
-<div class="process-step"><div class="step-num">1</div><h4>Free Consultation</h4><p>We visit your property, take measurements, and discuss your vision. Same-week site visits for all LA-area projects.</p></div>
-<div class="process-step"><div class="step-num">2</div><h4>Custom Design</h4><p>Our team creates a detailed design tailored to your property. You approve the design and materials before we start.</p></div>
-<div class="process-step"><div class="step-num">3</div><h4>Fabrication</h4><p>Everything is built in our local shop using premium-grade steel. We handle permits and HOA approvals.</p></div>
-<div class="process-step"><div class="step-num">4</div><h4>Installation</h4><p>Professional installation by our experienced crew. We clean up completely and walk you through everything.</p></div>
+<div class="process-step">
+<div class="step-num">1</div>
+<h4>Free Consultation</h4>
+<p>We visit your property, take measurements, and discuss your vision. Same-week site visits for all LA-area projects.</p>
+</div>
+<div class="process-step">
+<div class="step-num">2</div>
+<h4>Custom Design</h4>
+<p>Our team creates a detailed design tailored to your property. You approve the design and materials before we start.</p>
+</div>
+<div class="process-step">
+<div class="step-num">3</div>
+<h4>Fabrication</h4>
+<p>Everything is built in our local shop using premium-grade steel. We handle permits and HOA approvals.</p>
+</div>
+<div class="process-step">
+<div class="step-num">4</div>
+<h4>Installation</h4>
+<p>Professional installation by our experienced crew. We clean up completely and walk you through everything.</p>
+</div>
 </div>
 </div>
 </section>
+
+<!-- REVIEWS -->
 <section class="section bg-light" id="reviews">
 <div class="section-inner">
-<div class="section-title">What Our Clients Say</div>
-<div class="section-sub">Don't just take our word for it.</div>
+<div class="section-title">Reviews</div>
+<div class="section-sub">Don't just take our word for it — hear from homeowners and businesses across LA.</div>
 <div class="reviews-grid">
-<div class="review-card"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>"They built a custom driveway gate for our home that looks absolutely stunning. The craftsmanship is incredible and the DoorBird intercom works flawlessly. Highly recommend!"</blockquote><div class="review-author">Maria &amp; David Rodriguez</div><div class="review-loc">Homeowner, Sherman Oaks</div></div>
-<div class="review-card"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>"We needed 200ft of security fencing for our commercial property on a tight deadline. Gate &amp; Fence Solutions delivered on time and under budget. Professional from start to finish."</blockquote><div class="review-author">James Chen</div><div class="review-loc">Property Manager, Downtown LA</div></div>
-<div class="review-card"><div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><blockquote>"The custom stair railing they fabricated for our duplex is a work of art. Neighbors keep stopping to compliment it. Fair pricing, great communication, and beautiful results."</blockquote><div class="review-author">Sarah Kim</div><div class="review-loc">Homeowner, Echo Park</div></div>
+<div class="review-card">
+<div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<blockquote>"They built a custom driveway gate for our home that looks absolutely stunning. The craftsmanship is incredible and the DoorBird intercom they installed works flawlessly. Highly recommend!"</blockquote>
+<div class="review-author">Maria &amp; David Rodriguez</div>
+<div class="review-loc">Homeowner, Sherman Oaks</div>
+</div>
+<div class="review-card">
+<div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<blockquote>"We needed 200ft of security fencing for our commercial property on a tight deadline. Gate &amp; Fence Solutions delivered on time and under budget. Their team is professional from start to finish."</blockquote>
+<div class="review-author">James Chen</div>
+<div class="review-loc">Property Manager, Downtown LA</div>
+</div>
+<div class="review-card">
+<div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+<blockquote>"The custom stair railing they fabricated for our duplex is a work of art. Neighbors keep stopping to compliment it. Fair pricing, great communication, and beautiful results."</blockquote>
+<div class="review-author">Sarah Kim</div>
+<div class="review-loc">Homeowner, Echo Park</div>
+</div>
 </div>
 </div>
 </section>
-<section class="cta-section">
-<h2>Ready to Transform Your Property?</h2>
-<p>Chat with our AI assistant to check available consultation slots and book instantly.</p>
-<button class="cta-btn" onclick="openChat()">Chat Now &amp; Book a Free Consultation</button>
+
+<!-- CTA -->
+<section class="section bg-white" style="text-align:center;padding:60px 24px">
+<div class="section-inner">
+<div class="section-title">Ready to Transform Your Property?</div>
+<div class="section-sub">Chat with our AI assistant to check available consultation slots and book instantly.</div>
+<button class="btn-primary" onclick="toggleChat()" style="font-size:16px;padding:18px 40px">Chat Now &amp; Book a Free Consultation</button>
+<div style="margin-top:24px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;font-size:13px;color:#666">
+<span>&#128222; (310) 555-0147</span>
+<span>&#128231; info@gatenfencesolutions.com</span>
+<span>&#128247; @gateandfencesolutions_inc</span>
+</div>
+</div>
 </section>
+
+<!-- FOOTER -->
 <footer class="footer">
-<p>Copyright &copy; 2025 gateandfencesolutions - All Rights Reserved.</p>
+<a href="https://instagram.com/gateandfencesolutions" class="footer-instagram" target="_blank" aria-label="Instagram">&#128247;</a>
+<p>Copyright 2025 gateandfencesolutions - All Rights Reserved.</p>
 </footer>
 
-<!-- ADMIN NOTIFICATION TOAST -->
-<div class="toast" id="adminToast">
-<button class="toast-close" onclick="this.parentElement.style.display='none'">&times;</button>
-<div class="toast-title">&#128276; New Lead Notification Sent</div>
-<div class="toast-body" id="toastBody">Admin has been notified of a new consultation request.</div>
+<!-- ADMIN TOAST -->
+<div id="adminToast" style="display:none;position:fixed;top:20px;right:20px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:16px 22px;z-index:300;max-width:380px;border-left:4px solid #22c55e;animation:slideIn .4s ease">
+<button onclick="this.parentElement.style.display='none'" style="position:absolute;top:8px;right:12px;background:none;border:none;font-size:16px;color:#999;cursor:pointer">&times;</button>
+<div style="font-size:14px;font-weight:700;color:#1b1464;margin-bottom:4px">&#128276; New Lead Notification Sent</div>
+<div id="toastBody" style="font-size:12px;color:#666;line-height:1.5"></div>
 </div>
+<style>@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}.slot-btn{display:inline-block;padding:8px 14px;margin:3px;background:#f0f0f7;border:1px solid #ddd;border-radius:8px;font-size:12px;font-weight:600;color:#1b1464;cursor:pointer;transition:all .15s}.slot-btn:hover{background:#1b1464;color:#fff}.slot-btn.booked{background:#e8e8e8;color:#999;cursor:default;text-decoration:line-through}</style>
 
-<!-- AI CHAT -->
-<div class="chat-widget">
+<!-- DEMO BANNER -->
+<div class="demo-banner">DEMO - This is a sample website design for demonstration purposes</div>
+
+<!-- CHAT WIDGET -->
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()" aria-label="Open chat">&#128172;</button>
 <div class="chat-panel" id="chatPanel">
 <div class="chat-header">
-<div><h4>&#9881; Gate &amp; Fence Solutions AI</h4><p>Book consultations &bull; Get instant answers</p></div>
-<button class="chat-close" onclick="toggleChat()">&times;</button>
+<span>Gate &amp; Fence Solutions AI Assistant</span>
+<button class="chat-close" onclick="toggleChat()">&#10005;</button>
 </div>
 <div class="chat-messages" id="chatMessages">
-<div class="chat-msg ai"><div class="chat-bubble">Hi! I'm the Gate &amp; Fence Solutions AI assistant. I can:<br><br>&#128197; <strong>Book a free consultation</strong> - I'll show you available slots<br>&#128176; <strong>Give you pricing estimates</strong><br>&#128296; <strong>Answer service questions</strong><br>&#9201; <strong>Check project timelines</strong><br><br>What can I help you with?</div></div>
+<div class="chat-msg ai">Hi! I'm the Gate &amp; Fence Solutions AI assistant. I can:
+
+&#128197; <b>Book a free consultation</b> — type "book"
+&#128176; <b>Give pricing estimates</b>
+&#128296; <b>Answer service questions</b>
+&#9201; <b>Check project timelines</b>
+
+What can I help you with?</div>
 </div>
-<div class="chat-input-row">
-<input id="chatInput" placeholder="Ask anything or type 'book' to schedule..." onkeydown="if(event.key==='Enter')sendMsg()"/>
-<button onclick="sendMsg()">Send</button>
+<div class="chat-input-area">
+<input type="text" id="chatInput" placeholder="Type your message..." onkeydown="if(event.key==='Enter')sendChat()"/>
+<button class="chat-send" onclick="sendChat()">Send</button>
 </div>
 </div>
-<button class="chat-toggle" onclick="toggleChat()">&#128172;</button>
-</div>
-<div class="demo-banner">DEMO - This is a sample website design for demonstration purposes</div>
+
 <script>
-/* Scroll animations */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});});
+window.addEventListener('scroll',function(){var n=document.querySelector('.nav');if(window.scrollY>60)n.style.boxShadow='0 2px 16px rgba(0,0,0,.12)';else n.style.boxShadow='0 2px 10px rgba(0,0,0,.08)';});
 var observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';}});},{threshold:0.1});
-document.querySelectorAll('.service-card,.portfolio-item,.process-step,.review-card').forEach(function(el){el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s,transform .5s';observer.observe(el);});
-document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth'});});});
+document.querySelectorAll('.service-card,.portfolio-item,.process-step,.review-card').forEach(function(el){el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease,transform .5s ease';observer.observe(el);});
 
 function toggleChat(){document.getElementById('chatPanel').classList.toggle('open');}
-function openChat(){var p=document.getElementById('chatPanel');if(!p.classList.contains('open'))p.classList.add('open');}
 
-/* Schedule data */
-var schedule={
-  'Mon Apr 7':['9:00 AM','11:00 AM','2:00 PM'],
-  'Tue Apr 8':['10:00 AM','1:00 PM','3:00 PM'],
-  'Wed Apr 9':['9:00 AM','11:00 AM','4:00 PM'],
-  'Thu Apr 10':['10:00 AM','2:00 PM'],
-  'Fri Apr 11':['9:00 AM','11:00 AM','1:00 PM','3:00 PM']
-};
-var bookedSlots={'Tue Apr 8':['10:00 AM'],'Thu Apr 10':['10:00 AM']};
+var schedule={'Mon Apr 7':['9:00 AM','11:00 AM','2:00 PM'],'Tue Apr 8':['10:00 AM','1:00 PM','3:00 PM'],'Wed Apr 9':['9:00 AM','11:00 AM','4:00 PM'],'Thu Apr 10':['10:00 AM','2:00 PM'],'Fri Apr 11':['9:00 AM','11:00 AM','1:00 PM','3:00 PM']};
+var booked={'Tue Apr 8':['10:00 AM'],'Thu Apr 10':['10:00 AM']};
+var bk={step:0,name:'',phone:'',address:'',service:'',date:'',time:''};
 
-var bookingState={step:0,name:'',phone:'',address:'',service:'',date:'',time:''};
-
-/* Show admin toast notification */
-function showAdminToast(name,date,time,service){
-  var t=document.getElementById('adminToast');
-  var b=document.getElementById('toastBody');
-  b.innerHTML='<strong>New lead from website AI:</strong><br>'+
-    '\u2022 '+name+'<br>'+
-    '\u2022 '+date+' at '+time+'<br>'+
-    '\u2022 Service: '+service+'<br><br>'+
-    '<span style="color:#22c55e;font-weight:700">\u2713 SMS &amp; email sent to admin</span>';
-  t.style.display='block';
-  setTimeout(function(){t.style.display='none';},8000);
+function showToast(name,date,time,svc){
+var t=document.getElementById('adminToast');
+document.getElementById('toastBody').innerHTML='<b>New lead from website AI:</b><br>\u2022 '+name+'<br>\u2022 '+date+' at '+time+'<br>\u2022 Service: '+svc+'<br><br><span style="color:#22c55e;font-weight:700">\u2713 SMS & email sent to admin</span>';
+t.style.display='block';setTimeout(function(){t.style.display='none';},8000);
 }
 
-/* Build schedule slots HTML */
 function buildSlots(){
-  var h='Here are our available consultation slots this week:<br><br>';
-  for(var day in schedule){
-    h+='<strong>'+day+'</strong><br>';
-    var slots=schedule[day];
-    for(var i=0;i<slots.length;i++){
-      var isBooked=bookedSlots[day]&&bookedSlots[day].indexOf(slots[i])>=0;
-      if(isBooked){
-        h+='<span class="slot-btn booked">'+slots[i]+' (Booked)</span>';
-      }else{
-        h+='<span class="slot-btn" onclick="pickSlot(''+day+'',''+slots[i]+'')">'+slots[i]+'</span>';
-      }
-    }
-    h+='<br>';
-  }
-  h+='<br>Click a time slot to book, or tell me what day works best!';
-  return h;
+var h='Here are available consultation slots this week:<br><br>';
+for(var day in schedule){h+='<b>'+day+'</b><br>';var s=schedule[day];
+for(var i=0;i<s.length;i++){var isB=booked[day]&&booked[day].indexOf(s[i])>=0;
+if(isB){h+='<span class="slot-btn booked">'+s[i]+'</span>';}
+else{h+='<span class="slot-btn" onclick="pickSlot(\''+day+'\',\''+s[i]+'\')">'+s[i]+'</span>';}}h+='<br>';}
+h+='<br>Click a time slot to book!';return h;
 }
 
 function pickSlot(day,time){
-  bookingState.date=day;
-  bookingState.time=time;
-  bookingState.step=2;
-  var box=document.getElementById('chatMessages');
-  box.innerHTML+='<div class="chat-msg user"><div class="chat-bubble">'+day+' at '+time+'</div></div>';
-  setTimeout(function(){
-    box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">Great choice! <strong>'+day+' at '+time+'</strong> is available.<br><br>To confirm your booking, I need a few details:<br><br><strong>What is your full name?</strong></div></div>';
-    box.scrollTop=box.scrollHeight;
-  },500);
-}
-
-var chatR={
-gate:"We build custom driveway gates, pedestrian gates, sliding gates, and swing gates. Prices range from $3,500-$15,000+ depending on size and design.\n\nWant to book a free on-site consultation? Just type <strong>\'book\'</strong> and I\'ll show you available slots!",
-fence:"Our iron fencing starts at $45-$85 per linear foot installed. A typical 100ft residential fence runs $5,000-$9,000. We also do privacy louver screens and pool enclosures.\n\nType <strong>\'book\'</strong> to see available consultation slots!",
-railing:"Stair railings range from $150-$300 per linear foot for custom wrought iron. A standard staircase railing runs $2,500-$5,000. We do modern and ornamental styles.\n\nType <strong>\'book\'</strong> to schedule a free consultation!",
-access:"We install DoorBird intercom systems, keypad entry, and smart lock integrations. Basic systems start at $800-$1,500. Full DoorBird video intercom with gate automation runs $3,000-$6,000.\n\nType <strong>\'book\'</strong> to schedule a consultation!",
-price:"Here are our typical price ranges:\n\n\u2022 Custom gates: $3,500-$15,000+\n\u2022 Iron fencing: $45-$85/linear ft\n\u2022 Railings: $150-$300/linear ft\n\u2022 Access control: $800-$6,000\n\u2022 Pergolas: $5,000-$15,000\n\u2022 Welding repairs: $200-$800\n\nType <strong>\'book\'</strong> for a free on-site quote!",
-time:"Most projects take 2-4 weeks from design approval to installation. Simple repairs can be done same-week. Custom gates typically take 3-4 weeks.\n\nWant to get started? Type <strong>\'book\'</strong> to schedule!",
-area:"We serve all of Los Angeles County including Beverly Hills, Malibu, Pasadena, Santa Monica, Downtown LA, Sherman Oaks, Encino, Glendale, Burbank, and surrounding areas.\n\nFree on-site consultations for all LA-area projects!",
-hello:"Welcome to Gate &amp; Fence Solutions! I can help you:\n\n&#128197; Book a free consultation (type <strong>\'book\'</strong>)\n&#128176; Get pricing estimates\n&#128296; Learn about our services\n&#9201; Check project timelines\n\nWhat would you like to know?",
-general:"We specialize in custom ironwork \u2014 gates, fences, railings, access control, welding, pergolas, and more. 15+ years serving all of LA County.\n\nType <strong>\'book\'</strong> to schedule a free consultation, or ask me anything!"
-};
-
-function sendMsg(){
-  var inp=document.getElementById('chatInput');
-  var val=inp.value.trim();
-  if(!val)return;
-  var box=document.getElementById('chatMessages');
-  var safe=val.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  box.innerHTML+='<div class="chat-msg user"><div class="chat-bubble">'+safe+'</div></div>';
-  inp.value='';
-  var lc=val.toLowerCase();
-
-  /* BOOKING FLOW */
-  if(bookingState.step==2){
-    bookingState.name=val;
-    bookingState.step=3;
-    setTimeout(function(){
-      box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">Thanks, '+val.split(' ')[0]+'! What\'s your <strong>phone number</strong>?</div></div>';
-      box.scrollTop=box.scrollHeight;
-    },500);
-    return;
-  }
-  if(bookingState.step==3){
-    bookingState.phone=val;
-    bookingState.step=4;
-    setTimeout(function(){
-      box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">Got it! What\'s the <strong>property address</strong> (or city) for the consultation?</div></div>';
-      box.scrollTop=box.scrollHeight;
-    },500);
-    return;
-  }
-  if(bookingState.step==4){
-    bookingState.address=val;
-    bookingState.step=5;
-    setTimeout(function(){
-      box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">What type of project are you interested in?<br><br><span class="slot-btn" onclick="pickService(\'Gate\')">Gate</span><span class="slot-btn" onclick="pickService(\'Fence\')">Fence</span><span class="slot-btn" onclick="pickService(\'Railing\')">Railing</span><span class="slot-btn" onclick="pickService(\'Access Control\')">Access Control</span><span class="slot-btn" onclick="pickService(\'Pergola\')">Pergola</span><span class="slot-btn" onclick="pickService(\'Other\')">Other</span></div></div>';
-      box.scrollTop=box.scrollHeight;
-    },500);
-    return;
-  }
-
-  /* START BOOKING */
-  if(lc.match(/book|appoint|schedul|consult|visit|come out|meet|set up|available|slot|calendar|free quote/)||bookingState.step==1){
-    bookingState.step=1;
-    setTimeout(function(){
-      box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">'+buildSlots()+'</div></div>';
-      box.scrollTop=box.scrollHeight;
-    },600);
-    return;
-  }
-
-  /* REGULAR Q&A */
-  var r=chatR.general;
-  if(lc.match(/^(hi|hey|hello|help|what can)/))r=chatR.hello;
-  else if(lc.match(/gate|driveway|swing|slid/))r=chatR.gate;
-  else if(lc.match(/fence|fencing|enclos|louver|privacy/))r=chatR.fence;
-  else if(lc.match(/rail|stair|handrail|balcon/))r=chatR.railing;
-  else if(lc.match(/access|doorbird|intercom|keypad|remote|smart|lock|buzzer/))r=chatR.access;
-  else if(lc.match(/price|cost|how much|expens|budget|quote|estimat/))r=chatR.price;
-  else if(lc.match(/long|time|timeline|week|fast|when|how soon|turnaround/))r=chatR.time;
-  else if(lc.match(/area|location|where|serve|city|come to|travel|los angeles|malibu|beverly|pasadena|santa monica/))r=chatR.area;
-  setTimeout(function(){box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">'+r.replace(/\n/g,'<br>')+'</div></div>';box.scrollTop=box.scrollHeight;},600);
+bk.date=day;bk.time=time;bk.step=2;
+addMsg(day+' at '+time,'user');
+setTimeout(function(){addMsg('Great! <b>'+day+' at '+time+'</b> is available.\n\nTo confirm, what is your <b>full name</b>?','ai');},500);
 }
 
 function pickService(svc){
-  bookingState.service=svc;
-  bookingState.step=0;
-  var box=document.getElementById('chatMessages');
-  box.innerHTML+='<div class="chat-msg user"><div class="chat-bubble">'+svc+'</div></div>';
+bk.service=svc;bk.step=0;
+addMsg(svc,'user');
+if(!booked[bk.date])booked[bk.date]=[];
+booked[bk.date].push(bk.time);
+setTimeout(function(){
+addMsg('\u2705 <b>Consultation Confirmed!</b>\n\n\ud83d\udcc5 <b>'+bk.date+' at '+bk.time+'</b>\n\ud83d\udc64 '+bk.name+'\n\ud83d\udcde '+bk.phone+'\n\ud83d\udccd '+bk.address+'\n\ud83d\udd27 '+bk.service+'\n\nOur team has been notified and will confirm via text shortly!','ai');
+showToast(bk.name,bk.date,bk.time,bk.service);
+bk={step:0,name:'',phone:'',address:'',service:'',date:'',time:''};
+},800);
+}
 
-  /* Mark slot as booked */
-  if(!bookedSlots[bookingState.date])bookedSlots[bookingState.date]=[];
-  bookedSlots[bookingState.date].push(bookingState.time);
+function addMsg(text,type){
+var div=document.createElement('div');div.className='chat-msg '+type;div.innerHTML=text.replace(/\n/g,'<br>');
+var c=document.getElementById('chatMessages');c.appendChild(div);c.scrollTop=c.scrollHeight;
+}
 
-  setTimeout(function(){
-    box.innerHTML+='<div class="chat-msg ai"><div class="chat-bubble">'+
-      '<span style="font-size:20px">&#9989;</span> <strong>Consultation Confirmed!</strong><br><br>'+
-      '&#128197; <strong>'+bookingState.date+' at '+bookingState.time+'</strong><br>'+
-      '&#128100; '+bookingState.name+'<br>'+
-      '&#128222; '+bookingState.phone+'<br>'+
-      '&#128205; '+bookingState.address+'<br>'+
-      '&#128296; '+bookingState.service+'<br><br>'+
-      'Our team has been notified and will confirm via text shortly. See you then!'+
-      '</div></div>';
-    box.scrollTop=box.scrollHeight;
+function sendChat(){
+var input=document.getElementById('chatInput');var val=input.value.trim();if(!val)return;
+addMsg(val.replace(/</g,'&lt;'),'user');input.value='';var lc=val.toLowerCase();
 
-    /* SHOW ADMIN NOTIFICATION */
-    showAdminToast(bookingState.name,bookingState.date,bookingState.time,bookingState.service);
+if(bk.step==2){bk.name=val;bk.step=3;setTimeout(function(){addMsg('Thanks, '+val.split(' ')[0]+'! What\'s your <b>phone number</b>?','ai');},500);return;}
+if(bk.step==3){bk.phone=val;bk.step=4;setTimeout(function(){addMsg('Got it! What\'s the <b>property address</b> (or city)?','ai');},500);return;}
+if(bk.step==4){bk.address=val;bk.step=5;setTimeout(function(){addMsg('What type of project?<br><br><span class="slot-btn" onclick="pickService(\'Gate\')">Gate</span><span class="slot-btn" onclick="pickService(\'Fence\')">Fence</span><span class="slot-btn" onclick="pickService(\'Railing\')">Railing</span><span class="slot-btn" onclick="pickService(\'Access Control\')">Access Control</span><span class="slot-btn" onclick="pickService(\'Pergola\')">Pergola</span><span class="slot-btn" onclick="pickService(\'Other\')">Other</span>','ai');},500);return;}
 
-    /* Reset */
-    bookingState={step:0,name:'',phone:'',address:'',service:'',date:'',time:''};
-  },800);
+if(lc.match(/book|appoint|schedul|consult|visit|come out|meet|set up|available|slot|calendar|free quote/)){
+bk.step=1;setTimeout(function(){addMsg(buildSlots(),'ai');},600);return;}
+
+var r;
+if(lc.match(/^(hi|hey|hello|help|what can)/))r='Welcome to Gate & Fence Solutions! I can help you:\n\n\ud83d\udcc5 Book a free consultation (type <b>book</b>)\n\ud83d\udcb0 Get pricing estimates\n\ud83d\udd27 Learn about our services\n\u23f1 Check project timelines';
+else if(lc.match(/gate|driveway|swing|slid/))r='We build custom driveway gates, pedestrian gates, sliding gates, and swing gates. Prices range from $3,500-$15,000+ depending on size and design.\n\nType <b>book</b> to schedule a free consultation!';
+else if(lc.match(/fence|fencing|enclos|louver|privacy/))r='Our iron fencing starts at $45-$85 per linear foot installed. A typical 100ft residential fence runs $5,000-$9,000. We also do privacy louver screens and pool enclosures.\n\nType <b>book</b> to schedule!';
+else if(lc.match(/rail|stair|handrail|balcon/))r='Stair railings range from $150-$300 per linear foot for custom wrought iron. A standard staircase railing runs $2,500-$5,000.\n\nType <b>book</b> to schedule a free consultation!';
+else if(lc.match(/access|doorbird|intercom|keypad|remote|smart|lock/))r='We install DoorBird intercom systems, keypad entry, and smart lock integrations. Basic systems start at $800-$1,500. Full DoorBird video intercom with gate automation runs $3,000-$6,000.\n\nType <b>book</b> to schedule!';
+else if(lc.match(/price|cost|how much|expens|budget|quote|estimat/))r='Typical price ranges:\n\n\u2022 Custom gates: $3,500-$15,000+\n\u2022 Iron fencing: $45-$85/linear ft\n\u2022 Railings: $150-$300/linear ft\n\u2022 Access control: $800-$6,000\n\u2022 Pergolas: $5,000-$15,000\n\u2022 Welding repairs: $200-$800\n\nType <b>book</b> for a free on-site quote!';
+else if(lc.match(/long|time|timeline|week|fast|when|how soon/))r='Most projects take 2-4 weeks from design to installation. Simple repairs same-week. Custom gates 3-4 weeks.\n\nType <b>book</b> to get started!';
+else if(lc.match(/area|location|where|serve|city|la|malibu|beverly|pasadena/))r='We serve all of Los Angeles County \u2014 Beverly Hills, Malibu, Pasadena, Santa Monica, DTLA, Sherman Oaks, Encino, and more.\n\nFree on-site consultations for all LA-area projects!';
+else r='We specialize in custom ironwork \u2014 gates, fences, railings, access control, welding, pergolas, and more. 15+ years serving LA County.\n\nType <b>book</b> to schedule a free consultation!';
+setTimeout(function(){addMsg(r,'ai');},600);
 }
 </script>
 </body>
