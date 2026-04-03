@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Quick research helper using notebooklm-py
+# Usage: ./research "your topic here"
+#        ./research "your topic" --deep
+#        ./research "your topic" --notebook <id>
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VENV="$SCRIPT_DIR/notebooklm-py/.venv/bin/activate"
+
+if [ ! -f "$VENV" ]; then
+    echo "Error: notebooklm-py venv not found. Run setup first."
+    exit 1
+fi
+
+source "$VENV"
+
+if [ $# -lt 1 ]; then
+    echo "Usage: ./research \"your query\""
+    echo "       ./research \"your query\" --deep       # deep web search"
+    echo "       ./research \"your query\" --drive       # search Google Drive"
+    echo ""
+    echo "Requires: notebooklm login (run once to authenticate)"
+    exit 1
+fi
+
+QUERY="$1"
+shift
+
+MODE="fast"
+FROM="web"
+EXTRA_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --deep)
+            MODE="deep"
+            shift
+            ;;
+        --drive)
+            FROM="drive"
+            shift
+            ;;
+        *)
+            EXTRA_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+echo "Researching: \"$QUERY\" (mode=$MODE, source=$FROM)"
+echo "---"
+
+notebooklm source add-research "$QUERY" --from "$FROM" --mode "$MODE" --import-all "${EXTRA_ARGS[@]}"
