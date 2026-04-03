@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+# NotebookLM shortcut — one command for everything
+#
+# Usage:
+#   ./nb login                              # authenticate (opens browser)
+#   ./nb notebooks                          # list all notebooks
+#   ./nb use <id>                           # select a notebook
+#   ./nb new "My Research"                  # create a new notebook & select it
+#   ./nb status                             # show current notebook
+#
+#   ./nb add https://example.com            # add URL source
+#   ./nb add ./document.pdf                 # add file source
+#   ./nb add "paste some text" --title X    # add text source
+#   ./nb sources                            # list sources in current notebook
+#
+#   ./nb research "topic"                   # quick web research + auto-import
+#   ./nb research "topic" --deep            # deep web research
+#   ./nb research "topic" --drive           # search Google Drive
+#
+#   ./nb ask "what are the key themes?"     # ask your notebook a question
+#   ./nb ask "summarize chapter 2" --save   # ask and save answer as note
+#
+#   ./nb generate audio                     # generate podcast
+#   ./nb generate quiz                      # generate quiz
+#   ./nb generate report                    # generate report
+#   ./nb generate slide-deck                # generate slides
+#   ./nb generate video                     # generate video
+#
+#   ./nb download audio                     # download generated content
+#   ./nb download report                    # download report
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VENV="$SCRIPT_DIR/notebooklm-py/.venv/bin/activate"
+
+if [ ! -f "$VENV" ]; then
+    echo "Error: notebooklm-py not set up. Run:"
+    echo "  cd notebooklm-py && uv venv .venv && uv pip install -e '.[all]'"
+    exit 1
+fi
+
+source "$VENV"
+
+if [ $# -lt 1 ]; then
+    echo "NotebookLM Quick Commands:"
+    echo ""
+    echo "  Setup:"
+    echo "    ./nb login                    Log in (opens browser)"
+    echo "    ./nb notebooks                List notebooks"
+    echo "    ./nb new \"Title\"              Create & select notebook"
+    echo "    ./nb use <id>                 Select notebook"
+    echo "    ./nb status                   Current notebook info"
+    echo ""
+    echo "  Sources:"
+    echo "    ./nb add <url|file|text>      Add a source"
+    echo "    ./nb sources                  List sources"
+    echo "    ./nb research \"query\"         Web research + import"
+    echo ""
+    echo "  Chat:"
+    echo "    ./nb ask \"question\"           Ask your notebook"
+    echo ""
+    echo "  Generate:"
+    echo "    ./nb generate <type>          audio|quiz|report|video|slide-deck|..."
+    echo "    ./nb download <type>          Download generated content"
+    exit 0
+fi
+
+CMD="$1"
+shift
+
+case "$CMD" in
+    login)
+        notebooklm login "$@"
+        ;;
+    notebooks|list)
+        notebooklm list "$@"
+        ;;
+    new)
+        if [ $# -lt 1 ]; then
+            echo "Usage: ./nb new \"Notebook Title\""
+            exit 1
+        fi
+        TITLE="$1"
+        shift
+        OUTPUT=$(notebooklm create "$TITLE" --json "$@")
+        echo "$OUTPUT"
+        # Auto-select the new notebook
+        NB_ID=$(echo "$OUTPUT" | grep -o '"id": *"[^"]*"' | head -1 | grep -o '"[^"]*"$' | tr -d '"')
+        if [ -n "$NB_ID" ]; then
+            notebooklm use "$NB_ID"
+            echo "Notebook created and selected: $TITLE"
+        fi
+        ;;
+    use)
+        notebooklm use "$@"
+        ;;
+    status)
+        notebooklm status "$@"
+        ;;
+    add)
+        notebooklm source add "$@"
+        ;;
+    sources)
+        notebooklm source list "$@"
+        ;;
+    research)
+        if [ $# -lt 1 ]; then
+            echo "Usage: ./nb research \"your query\" [--deep] [--drive]"
+            exit 1
+        fi
+        QUERY="$1"
+        shift
+        MODE="fast"
+        FROM="web"
+        EXTRA=()
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                --deep) MODE="deep"; shift ;;
+                --drive) FROM="drive"; shift ;;
+                *) EXTRA+=("$1"); shift ;;
+            esac
+        done
+        echo "Researching: \"$QUERY\" (mode=$MODE, source=$FROM)"
+        notebooklm source add-research "$QUERY" --from "$FROM" --mode "$MODE" --import-all "${EXTRA[@]}"
+        ;;
+    ask)
+        if [ $# -lt 1 ]; then
+            echo "Usage: ./nb ask \"your question\" [--save]"
+            exit 1
+        fi
+        QUESTION="$1"
+        shift
+        ASK_ARGS=()
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                --save) ASK_ARGS+=("--save-as-note"); shift ;;
+                *) ASK_ARGS+=("$1"); shift ;;
+            esac
+        done
+        notebooklm ask "$QUESTION" "${ASK_ARGS[@]}"
+        ;;
+    generate)
+        notebooklm generate "$@"
+        ;;
+    download)
+        notebooklm download "$@"
+        ;;
+    *)
+        # Pass through to notebooklm directly for anything else
+        notebooklm "$CMD" "$@"
+        ;;
+esac
