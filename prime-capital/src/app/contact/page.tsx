@@ -1,375 +1,322 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import {
-  CheckCircle2,
-  Phone,
-  Mail,
-  MapPin,
-  User,
-  FileText,
-  Send,
-  Clock,
-  Building2,
-  Printer,
-  Shield,
-} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Send, Loader2, Phone, Mail, MapPin, Shield, Clock, MessageCircle } from "lucide-react";
 
-const loanTypeOptions = [
-  "Purchase",
-  "Refinance",
-  "Cash-Out Refinance",
-  "Bridge Loan",
-  "Construction Loan",
-  "Rehab / Fix & Flip",
-  "Commercial Loan",
-  "Second Mortgage",
-  "Other",
-];
+interface Message { role: "user" | "assistant"; content: string; }
+
+type CaptureStep = "idle" | "name" | "phone" | "email" | "property" | "loanType" | "details" | "done";
+
+const loanTypes = ["Bridge Loan", "Hard Money Loan", "HELOC", "Cash-Out Refinance", "Purchase Loan", "Rehab Loan", "Construction Loan", "Second Mortgage", "Other"];
 
 export default function ContactPage() {
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    propertyAddress: "",
-    loanType: "",
-    message: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [captureStep, setCaptureStep] = useState<CaptureStep>("idle");
+  const [leadData, setLeadData] = useState({ name: "", phone: "", email: "", propertyAddress: "", loanType: "", message: "", submittedAt: "" });
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleChange(
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const existing = JSON.parse(
-      localStorage.getItem("pcg_contact_leads") || "[]"
-    );
-    existing.push({ ...form, submittedAt: new Date().toISOString() });
-    localStorage.setItem("pcg_contact_leads", JSON.stringify(existing));
-    setSubmitted(true);
-    setForm({
-      name: "",
-      phone: "",
-      email: "",
-      propertyAddress: "",
-      loanType: "",
-      message: "",
-    });
-    setTimeout(() => setSubmitted(false), 5000);
-  }
+  const addMsg = (role: "user" | "assistant", content: string) => {
+    setMessages(prev => [...prev, { role, content }]);
+  };
+
+  const saveLead = (data: typeof leadData) => {
+    const lead = {
+      id: Date.now().toString(),
+      name: data.name,
+      phone: data.phone,
+      email: data.email,
+      propertyAddress: data.propertyAddress,
+      loanType: data.loanType,
+      message: data.message,
+      status: "New",
+      submittedAt: new Date().toISOString(),
+      source: "AI Chat",
+      // Also save as a borrower lead for the main dashboard
+      propertyType: "Not specified",
+      propertyValue: 0,
+      loanBalance: 0,
+      desiredAmount: 0,
+      loanTerm: "",
+      interestRate: 0,
+      monthlyPayment: 0,
+      ltv: 0,
+      firstName: data.name.split(" ")[0] || "",
+      lastName: data.name.split(" ").slice(1).join(" ") || "",
+      notes: `[AI Chat Lead] ${data.message}`,
+    };
+
+    // Save to contact leads
+    const contacts = JSON.parse(localStorage.getItem("pcg_contact_leads") || "[]");
+    contacts.unshift(lead);
+    localStorage.setItem("pcg_contact_leads", JSON.stringify(contacts));
+
+    // Also save to main leads for admin dashboard
+    const leads = JSON.parse(localStorage.getItem("pcg_leads") || "[]");
+    leads.unshift(lead);
+    localStorage.setItem("pcg_leads", JSON.stringify(leads));
+  };
+
+  const handleCaptureFlow = (text: string) => {
+    switch (captureStep) {
+      case "name":
+        setLeadData(prev => ({ ...prev, name: text }));
+        setCaptureStep("phone");
+        addMsg("user", text);
+        setTimeout(() => addMsg("assistant", `Nice to meet you, ${text.split(" ")[0]}! What's the best phone number to reach you?`), 500);
+        return true;
+      case "phone":
+        setLeadData(prev => ({ ...prev, phone: text }));
+        setCaptureStep("email");
+        addMsg("user", text);
+        setTimeout(() => addMsg("assistant", "Got it! And your email address?"), 500);
+        return true;
+      case "email":
+        setLeadData(prev => ({ ...prev, email: text }));
+        setCaptureStep("property");
+        addMsg("user", text);
+        setTimeout(() => addMsg("assistant", "What's the property address you're looking to finance? (Or type 'skip' if you haven't found one yet)"), 500);
+        return true;
+      case "property":
+        setLeadData(prev => ({ ...prev, propertyAddress: text === "skip" ? "TBD" : text }));
+        setCaptureStep("loanType");
+        addMsg("user", text);
+        setTimeout(() => addMsg("assistant", "What type of loan are you interested in?\n\n• Bridge Loan\n• Hard Money Loan\n• HELOC\n• Cash-Out Refinance\n• Purchase Loan\n• Rehab Loan\n• Construction Loan\n• Second Mortgage\n• Other / Not sure"), 500);
+        return true;
+      case "loanType":
+        setLeadData(prev => ({ ...prev, loanType: text }));
+        setCaptureStep("details");
+        addMsg("user", text);
+        setTimeout(() => addMsg("assistant", "Last question — briefly describe your situation or what you need. (Property value, loan amount, timeline, etc.)"), 500);
+        return true;
+      case "details": {
+        const finalLead = { ...leadData, message: text, submittedAt: new Date().toISOString() };
+        setLeadData(finalLead);
+        saveLead(finalLead);
+        setCaptureStep("done");
+        addMsg("user", text);
+        setTimeout(() => addMsg("assistant", `✅ Perfect! I've submitted your information to Garik Hadjinian. Here's a summary:\n\n📋 **${finalLead.name}**\n📞 ${finalLead.phone}\n📧 ${finalLead.email}\n📍 ${finalLead.propertyAddress}\n🏦 ${finalLead.loanType}\n\nGarik will call you within 24 hours. If you need to reach him sooner:\n\n📞 Direct: (818) 384-8544\n📞 Office: (855) 665-9774\n📧 Garik@PrimeCapitalGroupInc.com\n\nDRE License #01726567\n\nIs there anything else I can help with?`), 800);
+        return true;
+      }
+      default:
+        return false;
+    }
+  };
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || loading) return;
+    setInput("");
+
+    // If in capture flow, handle it
+    if (handleCaptureFlow(text)) return;
+
+    addMsg("user", text);
+    setLoading(true);
+
+    const lc = text.toLowerCase();
+
+    // Check if user wants to start the lead capture
+    if (lc.match(/talk|speak|call|contact|garik|apply|get started|interested|reach out|schedule|appointment|connect/)) {
+      setCaptureStep("name");
+      setLoading(false);
+      setTimeout(() => addMsg("assistant", "I'd love to connect you with Garik! Let me get a few details so he can prepare for your call.\n\nWhat's your full name?"), 500);
+      return;
+    }
+
+    // AI response for general questions
+    try {
+      let config = {};
+      try { config = JSON.parse(localStorage.getItem("pcg_chat_config") || "{}"); } catch {}
+
+      const allMessages = [...messages, { role: "user" as const, content: text }];
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: allMessages.map(m => ({ role: m.role, content: m.content })),
+          config
+        })
+      });
+      const data = await res.json();
+      let reply = data.choices?.[0]?.message?.content || "I'd be happy to help! Would you like me to connect you with Garik? Just say 'get started' and I'll collect your info.";
+
+      // Always append CTA to connect
+      if (!reply.includes("Garik") && !reply.includes("get started")) {
+        reply += "\n\nWould you like to speak with Garik about this? Just type 'get started' and I'll set it up!";
+      }
+
+      addMsg("assistant", reply);
+    } catch {
+      addMsg("assistant", "I'm having a brief connection issue. You can reach Garik directly at (818) 384-8544 or type 'get started' to leave your info and he'll call you back!");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative bg-pcg-dark py-24 lg:py-32">
+      <section className="relative bg-pcg-dark py-16 lg:py-20">
         <div className="absolute inset-0 bg-gradient-to-br from-pcg-dark-green/30 to-pcg-dark/90" />
         <div className="relative mx-auto max-w-7xl px-4 text-center lg:px-8">
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-pcg-green">
-            Prime Capital Group
-          </p>
-          <h1 className="font-playfair text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-            CONTACT US
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-300 md:text-xl">
-            Get in touch with our team to discuss your financing needs
-          </p>
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.3em] text-pcg-green">Prime Capital Group</p>
+          <h1 className="font-playfair text-4xl font-bold text-white md:text-5xl lg:text-6xl">TALK TO US</h1>
+          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-300">Chat with our AI assistant or connect directly with Garik</p>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="bg-white py-16 lg:py-24">
+      <section className="bg-white py-12 lg:py-16">
         <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-5">
-            {/* Left: Form (3 cols) */}
-            <div className="lg:col-span-3">
-              <div className="rounded-2xl bg-white p-8 shadow-xl ring-1 ring-gray-100">
-                <h2 className="font-playfair text-2xl font-bold text-pcg-dark md:text-3xl">
-                  Send Us a Message
-                </h2>
-                <p className="mt-2 text-gray-600">
-                  Fill out the form below and a member of our team will get back
-                  to you promptly.
-                </p>
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Chat - takes 2 cols */}
+            <div className="lg:col-span-2">
+              <div className="flex flex-col rounded-2xl bg-white shadow-xl ring-1 ring-gray-100 overflow-hidden" style={{ height: "600px" }}>
+                {/* Chat Header */}
+                <div className="bg-pcg-dark-green px-6 py-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold">PCG Loan Assistant</h3>
+                    <p className="text-green-200 text-xs">Online now — Ask anything about loans</p>
+                  </div>
+                </div>
 
-                {submitted && (
-                  <div className="mt-4 flex items-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-green-800">
-                    <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
-                    <p className="text-sm font-medium">
-                      Thank you! Your message has been submitted successfully.
-                      We will be in touch shortly.
-                    </p>
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+                  {/* Welcome message */}
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-pcg-dark-green flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">P</div>
+                    <div className="max-w-[80%] px-4 py-3 bg-white rounded-2xl rounded-bl-sm shadow-sm text-sm text-gray-700 leading-relaxed">
+                      Welcome to Prime Capital Group! I can help you with:
+                      <br /><br />
+                      💰 <strong>Loan information</strong> — rates, terms, qualifications<br />
+                      🏠 <strong>Property questions</strong> — what types we fund<br />
+                      📊 <strong>Quick estimates</strong> — LTV, payments<br />
+                      📞 <strong>Connect with Garik</strong> — type &quot;get started&quot;
+                      <br /><br />
+                      What can I help you with today?
+                    </div>
+                  </div>
+
+                  {messages.map((msg, i) => (
+                    <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : ""}`}>
+                      {msg.role === "assistant" && (
+                        <div className="w-8 h-8 rounded-full bg-pcg-dark-green flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">P</div>
+                      )}
+                      <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+                        msg.role === "user"
+                          ? "bg-pcg-dark-green text-white rounded-br-sm"
+                          : "bg-white text-gray-700 shadow-sm rounded-bl-sm"
+                      }`}>
+                        {msg.content}
+                      </div>
+                    </div>
+                  ))}
+
+                  {loading && (
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full bg-pcg-dark-green flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">P</div>
+                      <div className="px-4 py-3 bg-white rounded-2xl rounded-bl-sm shadow-sm">
+                        <Loader2 className="w-5 h-5 text-pcg-green animate-spin" />
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Quick Actions */}
+                {messages.length === 0 && (
+                  <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex gap-2 flex-wrap">
+                    {["What are your rates?", "How fast can you close?", "Get started"].map((q, i) => (
+                      <button key={i} onClick={() => { setInput(q); setTimeout(() => inputRef.current?.form?.requestSubmit(), 50); }}
+                        className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-600 hover:border-pcg-green hover:text-pcg-green transition-colors">
+                        {q}
+                      </button>
+                    ))}
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                      Name
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="text"
-                        name="name"
-                        required
-                        placeholder="Full name"
-                        value={form.name}
-                        onChange={handleChange}
-                        className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm transition-colors focus:border-pcg-green focus:outline-none focus:ring-2 focus:ring-pcg-green/20"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                        Phone
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                        <input
-                          type="tel"
-                          name="phone"
-                          required
-                          placeholder="(555) 123-4567"
-                          value={form.phone}
-                          onChange={handleChange}
-                          className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm transition-colors focus:border-pcg-green focus:outline-none focus:ring-2 focus:ring-pcg-green/20"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                        Email
-                      </label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                        <input
-                          type="email"
-                          name="email"
-                          required
-                          placeholder="you@example.com"
-                          value={form.email}
-                          onChange={handleChange}
-                          className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm transition-colors focus:border-pcg-green focus:outline-none focus:ring-2 focus:ring-pcg-green/20"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                      Property Address
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                      <input
-                        type="text"
-                        name="propertyAddress"
-                        placeholder="123 Main St, City, CA 91502"
-                        value={form.propertyAddress}
-                        onChange={handleChange}
-                        className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm transition-colors focus:border-pcg-green focus:outline-none focus:ring-2 focus:ring-pcg-green/20"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                      Loan Type
-                    </label>
-                    <select
-                      name="loanType"
-                      required
-                      value={form.loanType}
-                      onChange={handleChange}
-                      className="w-full rounded-lg border border-gray-300 bg-white py-3 px-4 text-sm transition-colors focus:border-pcg-green focus:outline-none focus:ring-2 focus:ring-pcg-green/20"
-                    >
-                      <option value="">Select a loan type</option>
-                      {loanTypeOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                      Message
-                    </label>
-                    <div className="relative">
-                      <FileText className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <textarea
-                        name="message"
-                        required
-                        rows={5}
-                        placeholder="Tell us about your financing needs..."
-                        value={form.message}
-                        onChange={handleChange}
-                        className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-sm transition-colors focus:border-pcg-green focus:outline-none focus:ring-2 focus:ring-pcg-green/20"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-pcg-green px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-pcg-dark-green hover:shadow-xl"
-                  >
-                    <Send className="h-4 w-4" />
-                    Send Message
+                {/* Input */}
+                <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="p-4 bg-white border-t border-gray-100 flex gap-3">
+                  <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
+                    placeholder={captureStep !== "idle" && captureStep !== "done" ? "Type your answer..." : "Ask about loans, rates, or type 'get started'..."}
+                    className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pcg-green focus:border-transparent" />
+                  <button type="submit" disabled={loading || !input.trim()}
+                    className="px-5 py-3 bg-pcg-green text-white rounded-xl font-semibold text-sm hover:bg-pcg-dark-green disabled:opacity-50 flex items-center gap-2">
+                    <Send className="w-4 h-4" />
                   </button>
                 </form>
               </div>
             </div>
 
-            {/* Right: Contact Info (2 cols) */}
-            <div className="lg:col-span-2">
-              <div className="space-y-8">
-                {/* Contact Person */}
-                <div className="rounded-2xl bg-pcg-light p-6">
-                  <h3 className="font-playfair text-xl font-bold text-pcg-dark">
-                    Garik Hadjinian
-                  </h3>
-                  <p className="mt-1 text-sm font-medium text-pcg-green">
-                    President / Principal Broker
-                  </p>
-                </div>
+            {/* Contact Info Sidebar */}
+            <div className="space-y-6">
+              <div className="rounded-2xl bg-pcg-light p-6">
+                <h3 className="font-playfair text-xl font-bold text-pcg-dark">Garik Hadjinian</h3>
+                <p className="mt-1 text-sm font-medium text-pcg-green">President / Principal Broker</p>
+              </div>
 
-                {/* Phone Numbers */}
-                <div className="rounded-2xl bg-pcg-light p-6">
-                  <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                    Phone
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-pcg-green" />
-                      <div>
-                        <p className="text-xs text-gray-500">Office</p>
-                        <a
-                          href="tel:8556659774"
-                          className="font-medium text-pcg-dark hover:text-pcg-green"
-                        >
-                          (855) 665-9774
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Phone className="h-5 w-5 text-pcg-green" />
-                      <div>
-                        <p className="text-xs text-gray-500">Direct</p>
-                        <a
-                          href="tel:8184684300"
-                          className="font-medium text-pcg-dark hover:text-pcg-green"
-                        >
-                          (818) 468-4300
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Printer className="h-5 w-5 text-pcg-green" />
-                      <div>
-                        <p className="text-xs text-gray-500">Fax</p>
-                        <p className="font-medium text-pcg-dark">
-                          (818) 468-4301
-                        </p>
-                      </div>
-                    </div>
+              <div className="rounded-2xl bg-pcg-light p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-pcg-green" />
+                  <div>
+                    <p className="text-xs text-gray-500">Office</p>
+                    <a href="tel:8556659774" className="font-medium text-pcg-dark hover:text-pcg-green">(855) 665-9774</a>
                   </div>
                 </div>
-
-                {/* Email */}
-                <div className="rounded-2xl bg-pcg-light p-6">
-                  <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                    Email
-                  </h4>
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-5 w-5 text-pcg-green" />
-                    <a
-                      href="mailto:info@primecapitalgrp.com"
-                      className="font-medium text-pcg-dark hover:text-pcg-green"
-                    >
-                      info@primecapitalgrp.com
-                    </a>
+                <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-pcg-green" />
+                  <div>
+                    <p className="text-xs text-gray-500">Direct</p>
+                    <a href="tel:8183848544" className="font-medium text-pcg-dark hover:text-pcg-green">(818) 384-8544</a>
                   </div>
                 </div>
+                <div className="flex items-center gap-3">
+                  <Mail className="h-5 w-5 text-pcg-green" />
+                  <a href="mailto:Garik@PrimeCapitalGroupInc.com" className="font-medium text-pcg-dark hover:text-pcg-green text-sm">Garik@PrimeCapitalGroupInc.com</a>
+                </div>
+              </div>
 
-                {/* Address */}
-                <div className="rounded-2xl bg-pcg-light p-6">
-                  <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                    Office Address
-                  </h4>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-pcg-green" />
-                    <div>
-                      <p className="font-medium text-pcg-dark">
-                        Prime Capital Group, Inc.
-                      </p>
-                      <p className="text-gray-600">150 N. Santa Anita Ave.</p>
-                      <p className="text-gray-600">Suite 300</p>
-                      <p className="text-gray-600">Arcadia, CA 91006</p>
-                    </div>
+              <div className="rounded-2xl bg-pcg-light p-6">
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-5 w-5 text-pcg-green mt-0.5" />
+                  <div>
+                    <p className="font-medium text-pcg-dark">1010 W. Magnolia Blvd.</p>
+                    <p className="text-gray-600 text-sm">Suite #202</p>
+                    <p className="text-gray-600 text-sm">Burbank, CA 91506</p>
                   </div>
                 </div>
+              </div>
 
-                {/* Hours */}
-                <div className="rounded-2xl bg-pcg-light p-6">
-                  <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                    Business Hours
-                  </h4>
-                  <div className="flex items-start gap-3">
-                    <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-pcg-green" />
-                    <div>
-                      <p className="font-medium text-pcg-dark">
-                        Monday &ndash; Friday
-                      </p>
-                      <p className="text-gray-600">9:00 AM &ndash; 5:00 PM</p>
-                    </div>
+              <div className="rounded-2xl bg-pcg-light p-6">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-pcg-green" />
+                  <div>
+                    <p className="font-medium text-pcg-dark">Mon – Fri</p>
+                    <p className="text-gray-600 text-sm">9:00 AM – 5:00 PM</p>
                   </div>
                 </div>
+              </div>
 
-                {/* License */}
-                <div className="rounded-2xl bg-pcg-light p-6">
-                  <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-500">
-                    License
-                  </h4>
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-pcg-green" />
-                    <div>
-                      <p className="text-sm text-gray-500">
-                        California DRE Broker License
-                      </p>
-                      <p className="font-medium text-pcg-dark">#01932702</p>
-                    </div>
+              <div className="rounded-2xl bg-pcg-light p-6">
+                <div className="flex items-center gap-3">
+                  <Shield className="h-5 w-5 text-pcg-green" />
+                  <div>
+                    <p className="text-xs text-gray-500">DRE Broker License</p>
+                    <p className="font-medium text-pcg-dark">#01726567</p>
                   </div>
                 </div>
+              </div>
 
-                {/* Map Placeholder */}
-                <div className="overflow-hidden rounded-2xl bg-pcg-dark-green p-8 text-center">
-                  <MapPin className="mx-auto h-10 w-10 text-white/60" />
-                  <p className="mt-4 font-playfair text-lg font-bold text-white">
-                    Prime Capital Group, Inc.
-                  </p>
-                  <p className="mt-2 text-sm text-white/80">
-                    150 N. Santa Anita Ave., Suite 300
-                  </p>
-                  <p className="text-sm text-white/80">Arcadia, CA 91006</p>
-                  <a
-                    href="https://maps.google.com/?q=150+N+Santa+Anita+Ave+Suite+300+Arcadia+CA+91006"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 inline-block rounded-lg bg-white/10 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/20"
-                  >
-                    Open in Google Maps
-                  </a>
-                </div>
+              <div className="rounded-2xl bg-pcg-dark-green p-6 text-center">
+                <p className="font-playfair text-lg font-bold text-white">Ready to Get Funded?</p>
+                <p className="mt-2 text-sm text-green-200">Type &quot;get started&quot; in the chat to begin your application</p>
               </div>
             </div>
           </div>
