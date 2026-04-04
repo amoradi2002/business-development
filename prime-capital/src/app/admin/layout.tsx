@@ -17,6 +17,10 @@ import {
   Lock,
   Mail,
   CreditCard,
+  Sun,
+  Moon,
+  Menu,
+  X,
 } from 'lucide-react';
 
 const navItems = [
@@ -104,6 +108,8 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -114,9 +120,33 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
+  useEffect(() => {
+    const saved = localStorage.getItem('pcg_theme');
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark');
+      setDarkMode(true);
+    }
+  }, []);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem('pcg_admin_auth');
     setIsAuthenticated(false);
+  };
+
+  const toggleDark = () => {
+    if (darkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('pcg_theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('pcg_theme', 'dark');
+    }
+    setDarkMode(!darkMode);
   };
 
   if (loading) {
@@ -133,9 +163,23 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#2d7a2d] flex flex-col flex-shrink-0">
-        <div className="px-6 py-6 border-b border-white/20">
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#2d7a2d] flex flex-col flex-shrink-0 transform transition-transform duration-200 ease-in-out
+          md:relative md:translate-x-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+      >
+        <div className="px-6 py-6 border-b border-white/20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">
               <span className="text-white font-bold text-lg">PCG</span>
@@ -145,6 +189,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <p className="text-green-200 text-xs">Prime Capital Group</p>
             </div>
           </div>
+          {/* Close button on mobile */}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden p-1 rounded-lg hover:bg-white/10 text-white"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
@@ -185,16 +236,30 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between flex-shrink-0">
-          <h1 className="text-lg font-semibold text-gray-800">Welcome, Garik</h1>
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-            <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </button>
+        <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-3">
+            {/* Hamburger menu for mobile */}
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <Menu className="w-5 h-5 text-gray-600" />
+            </button>
+            <h1 className="text-lg font-semibold text-gray-800">Welcome, Garik</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={toggleDark} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+              {darkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
+            </button>
+            <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <Bell className="w-5 h-5 text-gray-600" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            </button>
+          </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
           {children}
         </main>
       </div>
