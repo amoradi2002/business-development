@@ -16,6 +16,7 @@ import {
   Bell,
   Lock,
   Mail,
+  CreditCard,
 } from 'lucide-react';
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { label: 'Leads', href: '/admin/leads', icon: Users },
   { label: 'Investors', href: '/admin/investors', icon: TrendingUp },
   { label: 'Pipeline', href: '/admin/pipeline', icon: Kanban },
+  { label: 'Payments', href: '/admin/payments', icon: CreditCard },
   { label: 'Document Vault', href: '/admin/vault', icon: FolderLock },
   { label: 'AI Assistant', href: '/admin/ai-assistant', icon: Bot },
   { label: 'Clients', href: '/admin/clients', icon: UserCheck },
