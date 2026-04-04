@@ -9,15 +9,15 @@ import {
   MapPin,
   Save,
   PhoneCall,
-  FileDown,
 } from 'lucide-react';
-import { exportLeadToPDF } from '@/lib/export-pdf';
 import {
   mockLeads,
   mockBrokerLeads,
   mockRealtorLeads,
   mockInvestorLeads,
 } from '@/lib/mock-data';
+import { calculateLeadScore, getScoreLabel } from '@/lib/lead-scoring';
+import { getActivities, addActivity, type ActivityEntry } from '@/lib/activity';
 
 type Lead = typeof mockLeads[number];
 type BrokerLead = typeof mockBrokerLeads[number];
@@ -51,6 +51,20 @@ function relativeTime(iso: string) {
   return `${days}d ago`;
 }
 
+function formatTimestamp(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function ScoreBadge({ score }: { score: number }) {
+  const { label, color, bg } = getScoreLabel(score);
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${color} ${bg}`}>
+      {score} - {label}
+    </span>
+  );
+}
+
 function StatusBadge({ status }: { status: string }) {
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[status] || 'bg-gray-100 text-gray-600'}`}>
@@ -62,6 +76,39 @@ function StatusBadge({ status }: { status: string }) {
       )}
       {status}
     </span>
+  );
+}
+
+/* ---- Activity Timeline Component ---- */
+function ActivityTimeline({ leadId }: { leadId: string }) {
+  const [activities, setActivities] = useState<ActivityEntry[]>([]);
+
+  useEffect(() => {
+    setActivities(getActivities(leadId));
+  }, [leadId]);
+
+  if (activities.length === 0) {
+    return (
+      <p className="text-sm text-gray-400 italic">No activity recorded yet.</p>
+    );
+  }
+
+  return (
+    <div className="relative">
+      {/* Vertical connecting line */}
+      <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-green-200" />
+      <div className="space-y-4">
+        {activities.map((entry) => (
+          <div key={entry.id} className="relative flex gap-3 items-start">
+            <div className="relative z-10 flex-shrink-0 mt-1 w-[15px] h-[15px] rounded-full bg-green-500 border-2 border-white shadow-sm" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-800">{entry.description}</p>
+              <p className="text-xs text-gray-400 mt-0.5">{formatTimestamp(entry.timestamp)}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -77,13 +124,25 @@ function BorrowerDrawer({
 }) {
   const [notes, setNotes] = useState(lead.notes);
   const [status, setStatus] = useState(lead.status);
+  const [timelineKey, setTimelineKey] = useState(0);
+  const score = calculateLeadScore(lead);
 
   const handleMarkCalled = () => {
     const stamp = `[Called ${new Date().toLocaleString()}]`;
     setNotes((prev) => (prev ? prev + '\n' + stamp : stamp));
+    addActivity(lead.id, 'called', 'Marked as called');
+    setTimelineKey((k) => k + 1);
   };
 
   const handleSave = () => {
+    const oldStatus = lead.status;
+    const newStatus = status;
+    if (oldStatus !== newStatus) {
+      addActivity(lead.id, 'status_changed', `Status changed from ${oldStatus} to ${newStatus}`);
+    }
+    if (notes !== lead.notes) {
+      addActivity(lead.id, 'note_added', 'Internal note updated');
+    }
     onSave({ ...lead, notes, status });
   };
 
@@ -92,7 +151,10 @@ function BorrowerDrawer({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative w-full max-w-lg bg-white shadow-2xl overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-          <h3 className="text-lg font-bold text-gray-900">{lead.name}</h3>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900">{lead.name}</h3>
+            <div className="mt-1"><ScoreBadge score={score} /></div>
+          </div>
           <button onClick={onClose} className="p-1 rounded hover:bg-gray-100"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-6 space-y-6">
@@ -196,18 +258,18 @@ function BorrowerDrawer({
               <PhoneCall className="w-4 h-4" /> Mark as Called
             </button>
             <button
-              onClick={() => exportLeadToPDF({ ...lead, notes, status })}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <FileDown className="w-4 h-4" /> Export PDF
-            </button>
-            <button
               onClick={handleSave}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors"
             >
               <Save className="w-4 h-4" /> Save Changes
             </button>
           </div>
+
+          {/* Activity Timeline */}
+          <section>
+            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Activity Timeline</h4>
+            <ActivityTimeline key={timelineKey} leadId={lead.id} />
+          </section>
         </div>
       </div>
     </div>
@@ -226,10 +288,13 @@ function BrokerDrawer({
 }) {
   const [notes, setNotes] = useState(lead.notes);
   const [status, setStatus] = useState(lead.status);
+  const [timelineKey, setTimelineKey] = useState(0);
 
   const handleMarkCalled = () => {
     const stamp = `[Called ${new Date().toLocaleString()}]`;
     setNotes((prev) => (prev ? prev + '\n' + stamp : stamp));
+    addActivity(lead.id, 'called', 'Marked as called');
+    setTimelineKey((k) => k + 1);
   };
 
   return (
@@ -273,10 +338,23 @@ function BrokerDrawer({
             <button onClick={handleMarkCalled} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
               <PhoneCall className="w-4 h-4" /> Mark as Called
             </button>
-            <button onClick={() => onSave({ ...lead, notes, status })} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors">
+            <button onClick={() => {
+              const oldStatus = lead.status;
+              if (oldStatus !== status) {
+                addActivity(lead.id, 'status_changed', `Status changed from ${oldStatus} to ${status}`);
+              }
+              if (notes !== lead.notes) {
+                addActivity(lead.id, 'note_added', 'Internal note updated');
+              }
+              onSave({ ...lead, notes, status });
+            }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors">
               <Save className="w-4 h-4" /> Save Changes
             </button>
           </div>
+          <section>
+            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Activity Timeline</h4>
+            <ActivityTimeline key={timelineKey} leadId={lead.id} />
+          </section>
         </div>
       </div>
     </div>
@@ -295,10 +373,13 @@ function RealtorDrawer({
 }) {
   const [notes, setNotes] = useState(lead.notes);
   const [status, setStatus] = useState(lead.status);
+  const [timelineKey, setTimelineKey] = useState(0);
 
   const handleMarkCalled = () => {
     const stamp = `[Called ${new Date().toLocaleString()}]`;
     setNotes((prev) => (prev ? prev + '\n' + stamp : stamp));
+    addActivity(lead.id, 'called', 'Marked as called');
+    setTimelineKey((k) => k + 1);
   };
 
   return (
@@ -341,10 +422,23 @@ function RealtorDrawer({
             <button onClick={handleMarkCalled} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
               <PhoneCall className="w-4 h-4" /> Mark as Called
             </button>
-            <button onClick={() => onSave({ ...lead, notes, status })} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors">
+            <button onClick={() => {
+              const oldStatus = lead.status;
+              if (oldStatus !== status) {
+                addActivity(lead.id, 'status_changed', `Status changed from ${oldStatus} to ${status}`);
+              }
+              if (notes !== lead.notes) {
+                addActivity(lead.id, 'note_added', 'Internal note updated');
+              }
+              onSave({ ...lead, notes, status });
+            }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors">
               <Save className="w-4 h-4" /> Save Changes
             </button>
           </div>
+          <section>
+            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Activity Timeline</h4>
+            <ActivityTimeline key={timelineKey} leadId={lead.id} />
+          </section>
         </div>
       </div>
     </div>
@@ -363,10 +457,13 @@ function InvestorDrawer({
 }) {
   const [notes, setNotes] = useState(lead.notes);
   const [status, setStatus] = useState(lead.status);
+  const [timelineKey, setTimelineKey] = useState(0);
 
   const handleMarkCalled = () => {
     const stamp = `[Called ${new Date().toLocaleString()}]`;
     setNotes((prev) => (prev ? prev + '\n' + stamp : stamp));
+    addActivity(lead.id, 'called', 'Marked as called');
+    setTimelineKey((k) => k + 1);
   };
 
   return (
@@ -399,10 +496,23 @@ function InvestorDrawer({
             <button onClick={handleMarkCalled} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
               <PhoneCall className="w-4 h-4" /> Mark as Called
             </button>
-            <button onClick={() => onSave({ ...lead, notes, status })} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors">
+            <button onClick={() => {
+              const oldStatus = lead.status;
+              if (oldStatus !== status) {
+                addActivity(lead.id, 'status_changed', `Status changed from ${oldStatus} to ${status}`);
+              }
+              if (notes !== lead.notes) {
+                addActivity(lead.id, 'note_added', 'Internal note updated');
+              }
+              onSave({ ...lead, notes, status });
+            }} className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#2d7a2d] text-white text-sm font-semibold hover:bg-[#246324] transition-colors">
               <Save className="w-4 h-4" /> Save Changes
             </button>
           </div>
+          <section>
+            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Activity Timeline</h4>
+            <ActivityTimeline key={timelineKey} leadId={lead.id} />
+          </section>
         </div>
       </div>
     </div>
@@ -464,12 +574,14 @@ export default function LeadsPage() {
   // Filters
   const loanTypes = ['All', ...Array.from(new Set(leads.map((l) => l.loanType)))];
 
-  const filteredLeads = leads.filter((l) => {
-    if (search && !l.name.toLowerCase().includes(search.toLowerCase())) return false;
-    if (statusFilter !== 'All' && l.status !== statusFilter) return false;
-    if (loanTypeFilter !== 'All' && l.loanType !== loanTypeFilter) return false;
-    return true;
-  });
+  const filteredLeads = leads
+    .filter((l) => {
+      if (search && !l.name.toLowerCase().includes(search.toLowerCase())) return false;
+      if (statusFilter !== 'All' && l.status !== statusFilter) return false;
+      if (loanTypeFilter !== 'All' && l.loanType !== loanTypeFilter) return false;
+      return true;
+    })
+    .sort((a, b) => calculateLeadScore(b) - calculateLeadScore(a));
 
   const filteredBrokers = brokerLeads.filter((l) => {
     if (search && !l.brokerName.toLowerCase().includes(search.toLowerCase())) return false;
@@ -555,6 +667,7 @@ export default function LeadsPage() {
               <thead>
                 <tr className="bg-gray-50 text-left">
                   <th className="px-6 py-3 font-semibold text-gray-600">Name</th>
+                  <th className="px-6 py-3 font-semibold text-gray-600">Score</th>
                   <th className="px-6 py-3 font-semibold text-gray-600">Phone</th>
                   <th className="px-6 py-3 font-semibold text-gray-600">Loan Type</th>
                   <th className="px-6 py-3 font-semibold text-gray-600">Desired Amount</th>
@@ -571,6 +684,7 @@ export default function LeadsPage() {
                     className="hover:bg-gray-50 cursor-pointer transition-colors"
                   >
                     <td className="px-6 py-3 font-medium text-gray-900">{lead.name}</td>
+                    <td className="px-6 py-3"><ScoreBadge score={calculateLeadScore(lead)} /></td>
                     <td className="px-6 py-3 text-gray-600">{lead.phone}</td>
                     <td className="px-6 py-3 text-gray-600">{lead.loanType}</td>
                     <td className="px-6 py-3 text-gray-900 font-medium">{formatCurrency(lead.desiredAmount)}</td>
