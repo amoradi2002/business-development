@@ -11,7 +11,6 @@ const navLinks = [
   { label: "Brokers", href: "/brokers" },
   { label: "Realtors", href: "/realtors" },
   { label: "Calculator", href: "/calculator" },
-  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
