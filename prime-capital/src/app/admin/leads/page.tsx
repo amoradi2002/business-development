@@ -9,7 +9,9 @@ import {
   MapPin,
   Save,
   PhoneCall,
+  FileDown,
 } from 'lucide-react';
+import { exportLeadToPDF } from '@/lib/export-pdf';
 import {
   mockLeads,
   mockBrokerLeads,
@@ -192,6 +194,12 @@ function BorrowerDrawer({
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <PhoneCall className="w-4 h-4" /> Mark as Called
+            </button>
+            <button
+              onClick={() => exportLeadToPDF({ ...lead, notes, status })}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <FileDown className="w-4 h-4" /> Export PDF
             </button>
             <button
               onClick={handleSave}

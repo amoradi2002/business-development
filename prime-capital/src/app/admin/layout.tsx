@@ -17,6 +17,7 @@ import {
   Lock,
   Mail,
   CreditCard,
+  MessageSquare,
   Sun,
   Moon,
   Menu,
@@ -32,6 +33,7 @@ const navItems = [
   { label: 'Document Vault', href: '/admin/vault', icon: FolderLock },
   { label: 'AI Assistant', href: '/admin/ai-assistant', icon: Bot },
   { label: 'Clients', href: '/admin/clients', icon: UserCheck },
+  { label: 'Broker Messages', href: '/admin/broker-messages', icon: MessageSquare },
   { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
