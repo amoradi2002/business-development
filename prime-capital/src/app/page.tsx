@@ -17,6 +17,7 @@ import {
   FileCheck,
   Phone,
 } from "lucide-react";
+import QualifierButton from "@/components/QualifierButton";
 
 const trustItems = [
   {
@@ -165,6 +166,9 @@ export default function HomePage() {
             >
               Calculate Your Loan
             </Link>
+          </div>
+          <div className="mt-6 flex justify-center">
+            <QualifierButton />
           </div>
         </div>
       </section>
