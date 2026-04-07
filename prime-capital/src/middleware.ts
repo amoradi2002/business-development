@@ -3,10 +3,12 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isDemo = process.env.NEXT_PUBLIC_DEMO_MODE !== 'false';
 
-  // When not in demo mode, redirect backend routes to home
-  if (!isDemo) {
+  // Portals are blocked by default. To access them locally for development,
+  // set NEXT_PUBLIC_DEMO_MODE=true in .env.local
+  const isDemoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+
+  if (!isDemoMode) {
     if (
       pathname.startsWith('/admin') ||
       pathname.startsWith('/investor-portal') ||
