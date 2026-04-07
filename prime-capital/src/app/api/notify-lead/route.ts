@@ -17,12 +17,52 @@ export async function POST(req: NextRequest) {
       desiredAmount = "",
       estimatedMonthlyPayment = "",
       ltv = "",
+      sourcePage = "",
     } = lead;
+
+    // Build a dynamic "Additional Fields" section from any extra keys we
+    // don't already render explicitly above. This lets different tool pages
+    // pass their own specific fields without needing route changes.
+    const KNOWN_KEYS = new Set([
+      "name",
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+      "propertyAddress",
+      "loanType",
+      "propertyType",
+      "desiredAmount",
+      "estimatedMonthlyPayment",
+      "ltv",
+      "sourcePage",
+    ]);
+
+    const formatLabel = (key: string) =>
+      key
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (s) => s.toUpperCase())
+        .trim();
+
+    const extraRows = Object.entries(lead)
+      .filter(([k, v]) => !KNOWN_KEYS.has(k) && v !== "" && v !== null && v !== undefined)
+      .map(
+        ([k, v], i) => `
+        <tr>
+          <td style="padding:8px 12px;${i % 2 === 0 ? "background:#f0f7f0;" : ""}border-left:3px solid #2d7a2d;font-size:13px;color:#555;">
+            <strong>${formatLabel(k)}:</strong>
+          </td>
+          <td style="padding:8px 12px;${i % 2 === 0 ? "background:#f0f7f0;" : ""}font-size:13px;color:#333;">
+            ${String(v)}
+          </td>
+        </tr>`
+      )
+      .join("");
 
     // ── 1. Notify Garik ──────────────────────────────────────────────
 
     const garikBody = `
-      <p style="margin:0 0 16px;color:#333;font-size:15px;">A new lead just came in through the website.</p>
+      <p style="margin:0 0 16px;color:#333;font-size:15px;">A new lead just came in through the website${sourcePage ? ` via <strong>${sourcePage}</strong>` : ""}.</p>
 
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
         <tr>
@@ -97,6 +137,15 @@ export async function POST(req: NextRequest) {
             ${ltv ? `${ltv}%` : "Not specified"}
           </td>
         </tr>
+        <tr>
+          <td style="padding:8px 12px;border-left:3px solid #2d7a2d;font-size:13px;color:#555;">
+            <strong>Source Page:</strong>
+          </td>
+          <td style="padding:8px 12px;font-size:13px;color:#333;">
+            ${sourcePage || "Website"}
+          </td>
+        </tr>
+        ${extraRows}
       </table>
 
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;">
@@ -111,11 +160,14 @@ export async function POST(req: NextRequest) {
       </table>
     `;
 
-    const garikHtml = buildPCGEmail(`New Lead — ${name}`, garikBody);
+    const garikHtml = buildPCGEmail(
+      `New Lead — ${name}${sourcePage ? ` — ${sourcePage}` : ""}`,
+      garikBody
+    );
 
     await sendEmail({
       to: GARIK_EMAIL,
-      subject: `New PCG Lead — ${name} — ${loanType || "General Inquiry"}`,
+      subject: `New PCG Lead — ${name} — ${sourcePage || loanType || "General Inquiry"}`,
       html: garikHtml,
     });
 
