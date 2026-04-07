@@ -201,10 +201,10 @@ export async function POST(req: NextRequest) {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;background:#f0f7f0;border-radius:6px;border:1px solid #d4e8d4;">
           <tr>
             <td style="padding:16px;">
-              <p style="margin:0 0 4px;color:#333;font-size:14px;font-weight:700;">Garik Gharibyan</p>
-              <p style="margin:0 0 2px;color:#555;font-size:13px;">President &amp; Broker</p>
+              <p style="margin:0 0 4px;color:#333;font-size:14px;font-weight:700;">Garik Hadjinian</p>
+              <p style="margin:0 0 2px;color:#555;font-size:13px;">President / Principal Broker</p>
               <p style="margin:0 0 2px;color:#555;font-size:13px;">
-                Phone: <a href="tel:8189847388" style="color:#2d7a2d;">(818) 984-7388</a>
+                Direct: <a href="tel:8183848544" style="color:#2d7a2d;">(818) 384-8544</a> &nbsp;|&nbsp; Office: <a href="tel:8556659774" style="color:#2d7a2d;">(855) 665-9774</a>
               </p>
               <p style="margin:0;color:#555;font-size:13px;">
                 Email: <a href="mailto:garik@primecapitalgroupinc.com" style="color:#2d7a2d;">garik@primecapitalgroupinc.com</a>

@@ -84,10 +84,10 @@ export function buildPCGEmail(title: string, bodyHtml: string): string {
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <p style="margin:0 0 4px;color:#ffffff;font-size:14px;font-weight:700;">Prime Capital Group Inc.</p>
-                    <p style="margin:0 0 2px;color:#c8e6c8;font-size:12px;">1055 E. Colorado Blvd, Suite 500, Pasadena, CA 91106</p>
-                    <p style="margin:0 0 2px;color:#c8e6c8;font-size:12px;">Phone: (818) 984-7388 &nbsp;|&nbsp; Email: garik@primecapitalgroupinc.com</p>
-                    <p style="margin:0 0 8px;color:#c8e6c8;font-size:12px;">DRE #01726567 &nbsp;|&nbsp; NMLS #310405</p>
+                    <p style="margin:0 0 4px;color:#ffffff;font-size:14px;font-weight:700;">Prime Capital Group, Inc.</p>
+                    <p style="margin:0 0 2px;color:#c8e6c8;font-size:12px;">1010 W. Magnolia Blvd. Suite #202, Burbank, CA 91506</p>
+                    <p style="margin:0 0 2px;color:#c8e6c8;font-size:12px;">Office: (855) 665-9774 &nbsp;|&nbsp; Direct: (818) 384-8544 &nbsp;|&nbsp; Email: Garik@PrimeCapitalGroupInc.com</p>
+                    <p style="margin:0 0 8px;color:#c8e6c8;font-size:12px;">DRE #01726567</p>
                     <hr style="border:none;border-top:1px solid #459945;margin:8px 0;" />
                     <p style="margin:0;color:#a3d4a3;font-size:10px;line-height:1.4;">
                       This is not a loan commitment. All loans subject to approval. Terms and conditions may apply.

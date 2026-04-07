@@ -278,6 +278,13 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-pcg-green" />
+                  <div>
+                    <p className="text-xs text-gray-500">Fax</p>
+                    <p className="font-medium text-pcg-dark">(866) 315-4703</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
                   <Mail className="h-5 w-5 text-pcg-green" />
                   <a href="mailto:Garik@PrimeCapitalGroupInc.com" className="font-medium text-pcg-dark hover:text-pcg-green text-sm">Garik@PrimeCapitalGroupInc.com</a>
                 </div>
@@ -299,7 +306,7 @@ export default function ContactPage() {
                   <Clock className="h-5 w-5 text-pcg-green" />
                   <div>
                     <p className="font-medium text-pcg-dark">Mon – Fri</p>
-                    <p className="text-gray-600 text-sm">9:00 AM – 5:00 PM</p>
+                    <p className="text-gray-600 text-sm">9:00 AM – 6:00 PM</p>
                   </div>
                 </div>
               </div>
