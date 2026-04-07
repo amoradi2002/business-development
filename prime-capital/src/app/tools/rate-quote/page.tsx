@@ -1,38 +1,81 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, useMemo, FormEvent, ChangeEvent } from "react";
 
 const LOAN_TYPES = [
   "Hard Money Bridge",
   "HELOC",
   "Cash-Out Refinance",
   "Purchase",
-  "Rehab",
+  "Rehab Loan",
   "Construction",
   "Second Mortgage",
+  "Acquisition and Development",
+  "Private Money Loan",
+];
+
+const PROPERTY_TYPES = [
+  "SFR",
+  "Townhouse",
+  "Condo",
+  "Multifamily",
+  "Office",
+  "Warehouse",
+  "Retail",
+  "Mixed-Use",
+  "Raw Land",
   "Other",
 ];
 
-type FormState = {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  loanType: string;
-  propertyValue: string;
-  loanAmount: string;
-  zipCode: string;
+const LOAN_TERMS = [
+  { label: "6 months", months: 6 },
+  { label: "12 months", months: 12 },
+  { label: "24 months", months: 24 },
+  { label: "5 years", months: 60 },
+  { label: "10 years", months: 120 },
+  { label: "15 years", months: 180 },
+  { label: "20 years", months: 240 },
+  { label: "30 years", months: 360 },
+];
+
+const RATE_TABLE: Record<string, number> = {
+  "Hard Money Bridge": 10.5,
+  HELOC: 8.75,
+  "Cash-Out Refinance": 7.25,
+  Purchase: 7.0,
+  "Rehab Loan": 11.5,
+  Construction: 11.99,
+  "Second Mortgage": 9.5,
+  "Acquisition and Development": 10.99,
+  "Private Money Loan": 10.5,
 };
 
-const INITIAL: FormState = {
-  firstName: "",
-  lastName: "",
-  phone: "",
-  email: "",
+type CalcState = {
+  loanType: string;
+  propertyType: string;
+  propertyValue: string;
+  loanAmount: string;
+  loanTerm: string;
+};
+
+type ContactState = {
+  fullName: string;
+  phone: string;
+  email: string;
+};
+
+const INITIAL_CALC: CalcState = {
   loanType: "",
+  propertyType: "",
   propertyValue: "",
   loanAmount: "",
-  zipCode: "",
+  loanTerm: "",
+};
+
+const INITIAL_CONTACT: ContactState = {
+  fullName: "",
+  phone: "",
+  email: "",
 };
 
 function formatDollars(value: string) {
@@ -45,22 +88,87 @@ function stripDollars(value: string) {
   return value.replace(/[^0-9]/g, "");
 }
 
+function formatMoney(n: number) {
+  if (!isFinite(n) || isNaN(n)) return "—";
+  return (
+    "$" +
+    Math.round(n).toLocaleString("en-US", { maximumFractionDigits: 0 })
+  );
+}
+
 export default function RateQuotePage() {
-  const [form, setForm] = useState<FormState>(INITIAL);
+  const [calc, setCalc] = useState<CalcState>(INITIAL_CALC);
+  const [contact, setContact] = useState<ContactState>(INITIAL_CONTACT);
+  const [showContact, setShowContact] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (
+  const handleCalcChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     if (name === "propertyValue" || name === "loanAmount") {
-      setForm((prev) => ({ ...prev, [name]: stripDollars(value) }));
+      setCalc((prev) => ({ ...prev, [name]: stripDollars(value) }));
     } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
+      setCalc((prev) => ({ ...prev, [name]: value }));
     }
   };
+
+  const handleContactChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setContact((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const computed = useMemo(() => {
+    const baseRate = calc.loanType ? RATE_TABLE[calc.loanType] : null;
+    const propertyValue = Number(calc.propertyValue) || 0;
+    const loanAmount = Number(calc.loanAmount) || 0;
+    const term = LOAN_TERMS.find((t) => t.label === calc.loanTerm);
+    const termMonths = term ? term.months : 0;
+
+    let rateLow: number | null = null;
+    let rateHigh: number | null = null;
+    if (baseRate !== null) {
+      rateLow = +(baseRate - 0.5).toFixed(2);
+      rateHigh = +(baseRate + 0.5).toFixed(2);
+    }
+
+    let monthlyPayment: number | null = null;
+    if (baseRate !== null && loanAmount > 0 && termMonths > 0) {
+      monthlyPayment =
+        (loanAmount * (baseRate / 100)) / 12 + loanAmount / termMonths;
+    }
+
+    let ltv: number | null = null;
+    if (loanAmount > 0 && propertyValue > 0) {
+      ltv = (loanAmount / propertyValue) * 100;
+    }
+
+    let ltvColor = "text-white";
+    if (ltv !== null) {
+      if (ltv < 65) ltvColor = "text-green-300";
+      else if (ltv <= 70) ltvColor = "text-yellow-300";
+      else ltvColor = "text-red-300";
+    }
+
+    let approval = "—";
+    if (ltv !== null) {
+      if (ltv < 60) approval = "Strong";
+      else if (ltv <= 70) approval = "Moderate";
+      else approval = "Talk to a Specialist";
+    }
+
+    return {
+      baseRate,
+      rateLow,
+      rateHigh,
+      monthlyPayment,
+      ltv,
+      ltvColor,
+      approval,
+    };
+  }, [calc]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -68,9 +176,18 @@ export default function RateQuotePage() {
     setError("");
 
     const payload = {
-      ...form,
-      name: `${form.firstName} ${form.lastName}`.trim(),
-      desiredAmount: form.loanAmount,
+      ...calc,
+      ...contact,
+      name: contact.fullName,
+      desiredAmount: calc.loanAmount,
+      estimatedRate: computed.baseRate,
+      estimatedRateRange:
+        computed.rateLow !== null && computed.rateHigh !== null
+          ? `${computed.rateLow}% - ${computed.rateHigh}%`
+          : null,
+      estimatedLTV: computed.ltv,
+      estimatedMonthlyPayment: computed.monthlyPayment,
+      approvalLikelihood: computed.approval,
       sourcePage: "Rate Quote",
     };
 
@@ -91,13 +208,14 @@ export default function RateQuotePage() {
 
       if (!res.ok) throw new Error("Submission failed");
       setSuccess(true);
-      setForm(INITIAL);
     } catch (err) {
       setError("Something went wrong. Please try again or call us directly.");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const firstName = contact.fullName.trim().split(" ")[0] || "";
 
   return (
     <div className="min-h-screen bg-[#f7f7f7] py-8 px-4 sm:py-12">
@@ -121,93 +239,29 @@ export default function RateQuotePage() {
         <span className="hidden sm:inline">Call Now</span>
       </a>
 
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-5xl">
         <div className="overflow-hidden rounded-xl bg-white shadow-lg">
           <div className="bg-[#3d9b3d] px-6 py-8 text-center sm:px-10">
             <h1 className="text-2xl font-bold text-white sm:text-3xl">
-              Get Your Free Rate Quote
+              Quick Rate Quote
             </h1>
             <p className="mt-2 text-sm text-green-50 sm:text-base">
-              See what you qualify for in under a minute
+              Get an instant rate estimate for your loan
             </p>
           </div>
 
           <div className="px-6 py-8 sm:px-10">
-            {success ? (
-              <div className="rounded-lg bg-green-50 border border-green-200 p-6 text-center">
-                <p className="text-lg font-semibold text-[#2d7a2d]">
-                  Thank you! Garik will contact you within 24 hours.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      First Name
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="firstName"
-                      value={form.firstName}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Last Name
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="lastName"
-                      value={form.lastName}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Phone
-                    </label>
-                    <input
-                      required
-                      type="tel"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Email
-                    </label>
-                    <input
-                      required
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
-                    />
-                  </div>
-                </div>
-
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+              {/* Left column — Calculator form */}
+              <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Loan Type
                   </label>
                   <select
-                    required
                     name="loanType"
-                    value={form.loanType}
-                    onChange={handleChange}
+                    value={calc.loanType}
+                    onChange={handleCalcChange}
                     className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
                   >
                     <option value="">Select loan type...</option>
@@ -221,15 +275,35 @@ export default function RateQuotePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
+                    Property Type
+                  </label>
+                  <select
+                    name="propertyType"
+                    value={calc.propertyType}
+                    onChange={handleCalcChange}
+                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
+                  >
+                    <option value="">Select property type...</option>
+                    {PROPERTY_TYPES.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
                     Property Value
                   </label>
                   <input
-                    required
                     type="text"
                     inputMode="numeric"
                     name="propertyValue"
-                    value={form.propertyValue ? formatDollars(form.propertyValue) : ""}
-                    onChange={handleChange}
+                    value={
+                      calc.propertyValue ? formatDollars(calc.propertyValue) : ""
+                    }
+                    onChange={handleCalcChange}
                     placeholder="$0"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
                   />
@@ -237,15 +311,16 @@ export default function RateQuotePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Loan Amount
+                    Desired Loan Amount
                   </label>
                   <input
-                    required
                     type="text"
                     inputMode="numeric"
                     name="loanAmount"
-                    value={form.loanAmount ? formatDollars(form.loanAmount) : ""}
-                    onChange={handleChange}
+                    value={
+                      calc.loanAmount ? formatDollars(calc.loanAmount) : ""
+                    }
+                    onChange={handleCalcChange}
                     placeholder="$0"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
                   />
@@ -253,37 +328,173 @@ export default function RateQuotePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Zip Code
+                    Loan Term
                   </label>
-                  <input
-                    required
-                    type="text"
-                    inputMode="numeric"
-                    name="zipCode"
-                    value={form.zipCode}
-                    onChange={handleChange}
-                    maxLength={10}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
-                  />
+                  <select
+                    name="loanTerm"
+                    value={calc.loanTerm}
+                    onChange={handleCalcChange}
+                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
+                  >
+                    <option value="">Select term...</option>
+                    {LOAN_TERMS.map((t) => (
+                      <option key={t.label} value={t.label}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Right column — Live Result Panel */}
+              <div className="rounded-xl bg-gradient-to-br from-[#3d9b3d] to-[#2d7a2d] p-6 text-white shadow-lg">
+                <h2 className="text-lg font-semibold uppercase tracking-wide text-green-50">
+                  Live Estimate
+                </h2>
+                <p className="mt-1 text-xs text-green-100">
+                  Updates as you fill in the form
+                </p>
+
+                <div className="mt-6 space-y-6">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-green-100">
+                      Estimated Rate Range
+                    </p>
+                    <p className="mt-1 text-3xl font-bold sm:text-4xl">
+                      {computed.rateLow !== null && computed.rateHigh !== null
+                        ? `${computed.rateLow.toFixed(2)}% - ${computed.rateHigh.toFixed(2)}%`
+                        : "—"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-green-100">
+                      Estimated Monthly Payment
+                    </p>
+                    <p className="mt-1 text-2xl font-bold">
+                      {computed.monthlyPayment !== null
+                        ? formatMoney(computed.monthlyPayment)
+                        : "—"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-green-100">
+                      Estimated LTV
+                    </p>
+                    <p
+                      className={`mt-1 text-2xl font-bold ${computed.ltvColor}`}
+                    >
+                      {computed.ltv !== null
+                        ? `${computed.ltv.toFixed(1)}%`
+                        : "—"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-green-100">
+                      Approval Likelihood
+                    </p>
+                    <p className="mt-1 text-xl font-semibold">
+                      {computed.approval}
+                    </p>
+                  </div>
                 </div>
 
-                {error && (
-                  <p className="text-sm text-[#b22222]">{error}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full rounded-md bg-[#3d9b3d] px-4 py-3 text-base font-semibold text-white shadow-md hover:bg-[#2d7a2d] transition-colors disabled:opacity-60"
-                >
-                  {submitting ? "Submitting..." : "Get My Free Rate Quote"}
-                </button>
-
-                <p className="text-center text-xs text-gray-500">
-                  🔒 Privacy and Security Guaranteed - Your information is encrypted and never shared.
+                <p className="mt-8 border-t border-green-400/40 pt-4 text-xs text-green-100">
+                  Final rate determined after review by Garik Hadjinian
                 </p>
-              </form>
-            )}
+              </div>
+            </div>
+
+            {/* Lead Capture Section */}
+            <div className="mt-10">
+              {success ? (
+                <div className="rounded-lg border border-green-200 bg-green-50 p-6 text-center">
+                  <p className="text-lg font-semibold text-[#2d7a2d]">
+                    Thank you {firstName}! Garik will review your rate quote
+                    request and reach out within 24 hours. In the meantime you
+                    can reach him directly at (818) 384-8544.
+                  </p>
+                </div>
+              ) : !showContact ? (
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowContact(true)}
+                    className="w-full rounded-md bg-[#3d9b3d] px-4 py-4 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#2d7a2d] sm:text-lg"
+                  >
+                    Get My Official Quote From Garik
+                  </button>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 ease-out">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Almost done — where should Garik send your official quote?
+                  </h3>
+                  <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Full Name
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        name="fullName"
+                        value={contact.fullName}
+                        onChange={handleContactChange}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Phone
+                        </label>
+                        <input
+                          required
+                          type="tel"
+                          name="phone"
+                          value={contact.phone}
+                          onChange={handleContactChange}
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Email
+                        </label>
+                        <input
+                          required
+                          type="email"
+                          name="email"
+                          value={contact.email}
+                          onChange={handleContactChange}
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#3d9b3d] focus:outline-none focus:ring-1 focus:ring-[#3d9b3d]"
+                        />
+                      </div>
+                    </div>
+
+                    {error && (
+                      <p className="text-sm text-[#b22222]">{error}</p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full rounded-md bg-[#3d9b3d] px-4 py-3 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#2d7a2d] disabled:opacity-60"
+                    >
+                      {submitting ? "Submitting..." : "Send My Quote Request"}
+                    </button>
+
+                    <p className="text-center text-xs text-gray-500">
+                      🔒 Privacy and Security Guaranteed — Your information is
+                      encrypted and never shared.
+                    </p>
+                  </form>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
