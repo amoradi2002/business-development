@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const { messages, config } = await req.json();
-  const apiKey = process.env.NEXT_PUBLIC_PERPLEXITY_API_KEY;
+  const apiKey = process.env.PERPLEXITY_API_KEY;
 
   const systemPrompt = `You are a helpful loan specialist assistant for Prime Capital Group, Inc., a private and hard money lender in Burbank, CA.
 Key facts:
