@@ -5,7 +5,7 @@ import { sendEmail, buildVICEmail } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
-const REPORT_RECIPIENTS = ['8182006274@tmomail.net', 'info@vicconstruction.com'];
+const REPORT_RECIPIENTS = ['vartanm007@gmail.com'];
 
 export async function GET() {
   try {

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { addLead } from '@/lib/store';
 import { sendEmail, buildVICEmail } from '@/lib/email';
 
-const SMS_GATEWAY = '8182006274@tmomail.net';
+const OWNER_EMAIL = 'vartanm007@gmail.com';
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,15 +24,7 @@ export async function POST(req: NextRequest) {
 
     const timestamp = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
 
-    // 1. INSTANT TEXT NOTIFICATION (short SMS-style)
-    await sendEmail({
-      to: SMS_GATEWAY,
-      subject: 'New VIC Lead',
-      text: `New Lead - ${name}\nPhone: ${phone}\nService: ${service}\nTimeline: ${timeline}\nCall them now`,
-      html: `<p>New Lead - ${name}<br>Phone: ${phone}<br>Service: ${service}<br>Timeline: ${timeline}<br>Call them now</p>`,
-    });
-
-    // 2. FULL EMAIL NOTIFICATION (detailed)
+    // 1. LEAD NOTIFICATION EMAIL TO OWNER
     const fullBody = `
       <p style="margin:0 0 16px;font-size:15px;"><strong>A new lead just came in.</strong></p>
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
@@ -47,14 +39,15 @@ export async function POST(req: NextRequest) {
         <tr><td style="padding:10px;background:#f7f7f7;border-left:3px solid #e8702e;vertical-align:top;"><strong>Description:</strong></td><td style="padding:10px;background:#f7f7f7;">${description || 'N/A'}</td></tr>
         <tr><td style="padding:10px;border-left:3px solid #e8702e;"><strong>Submitted:</strong></td><td style="padding:10px;color:#666;">${timestamp}</td></tr>
       </table>
+      <p style="margin:24px 0 0;font-size:14px;color:#666;">Call them as soon as possible to lock in the estimate.</p>
     `;
     await sendEmail({
-      to: SMS_GATEWAY,
+      to: OWNER_EMAIL,
       subject: `New VIC Construction Lead — ${name} — ${service}`,
       html: buildVICEmail('New Lead Notification', fullBody),
     });
 
-    // 3. CUSTOMER CONFIRMATION EMAIL
+    // 2. CUSTOMER CONFIRMATION EMAIL
     if (email) {
       const customerBody = `
         <p style="margin:0 0 16px;font-size:15px;">Hi ${name.split(' ')[0]},</p>
