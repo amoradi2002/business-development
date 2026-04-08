@@ -55,13 +55,25 @@ export default function BrokersPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const payload = { ...form, submittedAt: new Date().toISOString() };
     const existing = JSON.parse(
       localStorage.getItem("pcg_broker_leads") || "[]"
     );
-    existing.push({ ...form, submittedAt: new Date().toISOString() });
+    existing.push(payload);
     localStorage.setItem("pcg_broker_leads", JSON.stringify(existing));
+
+    try {
+      await fetch("/api/notify-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, formType: "broker" }),
+      });
+    } catch (err) {
+      console.error("Failed to notify broker lead", err);
+    }
+
     setSubmitted(true);
     setForm({
       brokerName: "",

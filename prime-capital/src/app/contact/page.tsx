@@ -59,6 +59,21 @@ export default function ContactPage() {
     const leads = JSON.parse(localStorage.getItem("pcg_leads") || "[]");
     leads.unshift(lead);
     localStorage.setItem("pcg_leads", JSON.stringify(leads));
+
+    // Send email notifications to Garik and the customer
+    fetch("/api/notify-lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        formType: "contact",
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        propertyAddress: data.propertyAddress,
+        loanType: data.loanType,
+        message: data.message,
+      }),
+    }).catch((err) => console.error("Failed to notify contact lead", err));
   };
 
   const handleCaptureFlow = (text: string) => {

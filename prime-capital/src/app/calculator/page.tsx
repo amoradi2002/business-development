@@ -183,7 +183,7 @@ export default function CalculatorPage() {
   };
 
   // -- Submit --
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const lead = {
@@ -221,6 +221,37 @@ export default function CalculatorPage() {
       localStorage.setItem("pcg_leads", JSON.stringify(existing));
     } catch {
       // storage full or unavailable — still show success
+    }
+
+    try {
+      await fetch("/api/notify-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formType: "calculator",
+          firstName,
+          lastName,
+          phone,
+          email,
+          propertyAddress,
+          propertyCity,
+          propertyZip,
+          coBorrower,
+          loanPurpose,
+          loanType,
+          propertyType,
+          propertyValue,
+          desiredAmount,
+          estimatedMonthlyPayment: Math.round(monthlyPayment),
+          ltv: (ltv * 100).toFixed(2),
+          interestRate: rate.toFixed(2),
+          loanTerm: term,
+          baseMonthlyIncome: parseDollar(baseIncome),
+          notes,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to notify calculator lead", err);
     }
 
     setSubmitted(true);

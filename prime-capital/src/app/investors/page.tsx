@@ -19,13 +19,25 @@ export default function InvestorsPage() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const payload = { ...form, submittedAt: new Date().toISOString() };
     const existing = JSON.parse(
       localStorage.getItem("pcg_investor_leads") || "[]"
     );
-    existing.push({ ...form, submittedAt: new Date().toISOString() });
+    existing.push(payload);
     localStorage.setItem("pcg_investor_leads", JSON.stringify(existing));
+
+    try {
+      await fetch("/api/notify-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, formType: "investor" }),
+      });
+    } catch (err) {
+      console.error("Failed to notify investor lead", err);
+    }
+
     setSubmitted(true);
     setForm({ firstName: "", lastName: "", email: "", emailUpdates: false });
     setTimeout(() => setSubmitted(false), 5000);

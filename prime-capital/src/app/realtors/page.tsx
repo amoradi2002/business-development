@@ -52,13 +52,25 @@ export default function RealtorsPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const payload = { ...form, submittedAt: new Date().toISOString() };
     const existing = JSON.parse(
       localStorage.getItem("pcg_realtor_leads") || "[]"
     );
-    existing.push({ ...form, submittedAt: new Date().toISOString() });
+    existing.push(payload);
     localStorage.setItem("pcg_realtor_leads", JSON.stringify(existing));
+
+    try {
+      await fetch("/api/notify-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, formType: "realtor" }),
+      });
+    } catch (err) {
+      console.error("Failed to notify realtor lead", err);
+    }
+
     setSubmitted(true);
     setForm({
       realtorName: "",
