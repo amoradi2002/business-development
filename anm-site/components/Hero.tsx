@@ -110,9 +110,9 @@ export default function Hero() {
               className="text-4xl font-bold text-white mb-1"
               style={{ fontFamily: "var(--font-syne)" }}
             >
-              <span style={{ color: "#f5a623" }}>$0</span>
+              <span style={{ color: "#f5a623" }}>Days</span>
             </div>
-            <div className="text-white/60 text-sm">to Live in Days</div>
+            <div className="text-white/60 text-sm">Not Months to Live</div>
           </div>
         </div>
       </div>
