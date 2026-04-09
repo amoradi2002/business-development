@@ -20,7 +20,7 @@ Premium one-page agency website for **ANM Software Solutions**. Built with Next.
 ```bash
 cd anm-site
 npm install
-cp .env.local.example .env.local   # then fill in RESEND_API_KEY
+cp .env.local.example .env.local   # then fill in RESEND_API_KEY + PERPLEXITY_API_KEY
 npm run dev
 ```
 
@@ -31,12 +31,25 @@ Open [http://localhost:3000](http://localhost:3000).
 Copy `.env.local.example` to `.env.local` and set:
 
 ```
-RESEND_API_KEY=your_key_here
+RESEND_API_KEY=your_resend_key_here
+PERPLEXITY_API_KEY=your_perplexity_key_here
 ```
 
-Get a key at [resend.com](https://resend.com/api-keys). Free tier is fine for launch — 3,000 emails/month.
+### Resend (contact form → email)
 
-> Note: the contact form sends to `anmdevlopmentservices@yahoo.com` from `onboarding@resend.dev` by default. Once you verify a domain in Resend (e.g. `hello@anmsoftwaresolutions.com`), swap the `from:` address in `app/api/contact/route.ts`.
+Get a key at [resend.com/api-keys](https://resend.com/api-keys). Free tier is fine for launch — 3,000 emails/month.
+
+Every submission on the contact form sends a formatted HTML email to **anmdevlopmentservices@yahoo.com** with the lead's full name, business, phone, email, industry, and message — plus a `Reply-To` header set to the lead so you can reply directly from your inbox.
+
+> Note: the default `from:` address is `onboarding@resend.dev`. Once you verify `anmsoftwaresolutions.com` in Resend, swap the `from:` in `app/api/contact/route.ts` to something like `leads@anmsoftwaresolutions.com` for better deliverability.
+
+### Perplexity (AI chat widget)
+
+Get a key at [perplexity.ai/settings/api](https://www.perplexity.ai/settings/api). The chat widget uses the `sonar` model through a **server-side** `/api/chat` route — the key is never exposed to the browser.
+
+The chat is pre-loaded with a full system prompt about ANM — services, industries, pricing approach, featured work (PCG), and how to route interested visitors to book a call.
+
+If `PERPLEXITY_API_KEY` isn't set, the widget gracefully falls back to a "please call or email directly" message instead of breaking.
 
 ## Build
 
@@ -53,8 +66,9 @@ npm start
 npm install -g vercel
 vercel login
 vercel               # first-time setup
-vercel env add RESEND_API_KEY   # paste your key, select Production
-vercel --prod        # deploy production
+vercel env add RESEND_API_KEY       # paste key, select Production
+vercel env add PERPLEXITY_API_KEY   # paste key, select Production
+vercel --prod                       # deploy production
 ```
 
 ### Option B — Dashboard
@@ -63,7 +77,7 @@ vercel --prod        # deploy production
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repo
 3. **Root Directory:** `anm-site`
 4. **Framework Preset:** Next.js (auto-detected)
-5. Add environment variable: `RESEND_API_KEY`
+5. Add environment variables: `RESEND_API_KEY` **and** `PERPLEXITY_API_KEY`
 6. Click **Deploy**
 
 ### Point anmsoftwaresolutions.com at Vercel
@@ -84,9 +98,11 @@ After deploying:
 ```
 anm-site/
 ├── app/
-│   ├── api/contact/route.ts    # Resend email endpoint
-│   ├── globals.css             # All custom CSS (gradient mesh, animations)
-│   ├── layout.tsx              # Syne + DM Sans fonts
+│   ├── api/
+│   │   ├── contact/route.ts    # Resend — emails leads to your inbox
+│   │   └── chat/route.ts       # Perplexity sonar — AI chat backend
+│   ├── globals.css             # All custom CSS (gradient mesh, chat widget, animations)
+│   ├── layout.tsx              # Fonts + mounts ChatWidget globally
 │   └── page.tsx                # One-page composition
 ├── components/
 │   ├── Nav.tsx                 # Glass morphism nav + mobile hamburger
@@ -96,8 +112,9 @@ anm-site/
 │   ├── CaseStudy.tsx           # PCG featured case study
 │   ├── Industries.tsx          # 30 industry pill badges
 │   ├── WhyAnm.tsx              # 3 feature cards (gold accent)
-│   ├── Contact.tsx             # Booking form
+│   ├── Contact.tsx             # Booking form → Resend
 │   ├── Footer.tsx              # 3-column dark footer
+│   ├── ChatWidget.tsx          # Floating AI chat bubble (Perplexity)
 │   ├── FadeIn.tsx              # Intersection Observer wrapper
 │   └── CountUp.tsx             # Animated number counter
 ├── package.json
